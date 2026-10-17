@@ -290,8 +290,9 @@ neural-networks/
 │   ├── Model.lean               # Shallow networks composed in order
 │   ├── WidthThree.lean          # The book's two width-three networks
 │   └── Verification.lean        # Definition checks
-├── DeepNetwork.lean             # Entry point for Sections 4.3–4.4
+├── DeepNetwork.lean             # Entry point for Sections 4.2–4.4
 └── DeepNetwork/
+    ├── FromComposition.lean     # Section 4.2: composed networks are deep networks
     ├── WidthThree.lean          # Two layers of three units, named parameters
     └── Verification.lean        # Definition checks
 ```
@@ -315,9 +316,13 @@ are the foundation's networks with one hidden layer (see Chapter 3), and compose
 networks apply those shallow networks in order, so every network in the
 repository is evaluated on this foundation.
 
+`networkFamily a A` is the family of functions an architecture `A` describes as
+its parameters vary (Section 4.3.1); letting the hyperparameters vary as well
+gives the book's family of families.
+
 Composed networks (Section 4.1) and deep networks (Sections 4.3–4.4) are separate
-concepts with separate folders. Section 4.2, which shows that composed networks
-are a special case of deep networks, will connect them.
+concepts with separate folders, connected by Section 4.2 in
+`DeepNetwork/FromComposition.lean`.
 
 `neural-networks/ComposedNetwork/Model.lean` follows Section 4.1: the output of
 one shallow network becomes the input of the next. `composedNetwork activation Ns x`
@@ -330,10 +335,24 @@ of a width-three network with parameters `Φ` into a second width-three network
 with parameters `Φ'`, returning `y'`. Both reuse `WidthThree.Parameters` from
 Chapter 3. `ComposedNetwork/Verification.lean` checks that this example is the
 general composition applied to the list of the two networks
-(`WidthThree.composedNetwork_eq`).
+(`WidthThree.composedNetwork_eq`). `composedFamily activation widths` collects
+the functions obtained by composing networks of the given widths.
 
-`neural-networks/DeepNetwork/` holds the book's specific deep networks; the
-general deep network is the foundation in `Network/`.
+`neural-networks/DeepNetwork/` holds the book's specific deep networks and the
+link from composed networks; the general deep network is the foundation in
+`Network/`.
+
+`DeepNetwork/FromComposition.lean` follows Section 4.2. A shallow network's output
+`φ₀ + ∑ d, φ_d * h_d` is linear in its hidden units, and the next network begins
+with the linear maps `θ'_d'0 + θ'_d'1 * y`, so the two merge into one hidden layer
+with `ψ_d'0 = θ'_d'0 + θ'_d'1 * φ₀` and `ψ_d'd = θ'_d'1 * φ_d` (equations
+4.5–4.6). `ComposedNetwork.toNetworkParameters` builds the deep network this way
+for any list of shallow networks, `network_toNetworkParameters` proves that it
+computes their composition, and `composedFamily_subset` concludes that composed
+networks of widths `[D₁, …, D_K]` lie in the deep family with those hidden widths.
+The merged weight matrices are outer products `θ' φᵀ`, while a general deep
+network may use any matrix; the book notes that deep networks therefore describe
+a broader family, which is not proved here.
 `DeepNetwork/WidthThree.lean` gives the two-layer network of Section 4.3 with the
 book's named parameters, equations (4.7)–(4.9): six `θ` for the first layer,
 twelve `ψ` for the second, and four `φ'` for the output.

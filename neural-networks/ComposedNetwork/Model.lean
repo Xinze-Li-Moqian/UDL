@@ -16,6 +16,8 @@ composed networks may have different widths. Each one is a `shallowNetwork`,
 evaluated on the matrix-notation foundation in `Network`. The list length is the
 number of composed networks; the empty list returns its input unchanged. The
 book's case of two width-three networks is in `ComposedNetwork.WidthThree`.
+`composedFamily activation widths` collects the functions obtained by composing
+networks of the given widths.
 -/
 
 @[expose] public section
@@ -28,5 +30,12 @@ def composedNetwork {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     List (Σ D, ShallowNetworkParameters Scalar D) → Scalar → Scalar
   | [], x => x
   | ⟨_, Φ⟩ :: rest, x => composedNetwork activation rest (shallowNetwork activation x Φ)
+
+/-- The family of functions computed by composing shallow networks of widths
+`[D₁, …, D_K]`, one network per width. -/
+def composedFamily {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
+    (activation : ActivationFunction Scalar) (widths : List ℕ) : Set (Scalar → Scalar) :=
+  { f | ∃ Ns : List (Σ D, ShallowNetworkParameters Scalar D),
+      Ns.map Sigma.fst = widths ∧ f = composedNetwork activation Ns }
 
 end NeuralNetworks

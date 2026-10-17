@@ -38,6 +38,10 @@ Parameters can also be built layer by layer, as in the nested form of equation
 (4.16): `single β Ω` is a network with no hidden layers, `y = β + Ω x`, and
 `cons β₀ Ω₀ rest` puts the hidden layer `a[β₀ + Ω₀ x]` in front of `rest`.
 `network_single` and `network_cons` evaluate networks built this way.
+
+`networkFamily a A` is the family of functions described by the architecture `A`
+as the parameters vary (Section 4.3.1). Letting the hyperparameters vary too gives
+the book's "family of families".
 -/
 
 @[expose] public section
@@ -94,6 +98,12 @@ def hidden (a : ActivationFunction Scalar) (Φ : NetworkParameters Scalar A)
 def network (a : ActivationFunction Scalar) (Φ : NetworkParameters Scalar A)
     (x : Fin A.inputs → Scalar) : Fin A.outputs → Scalar :=
   Φ.β (Fin.last _) + Φ.Ω (Fin.last _) *ᵥ hidden a Φ x (Fin.last _)
+
+/-- Section 4.3.1: for fixed hyperparameters `A`, the family of functions the network
+describes as its parameters vary. -/
+def networkFamily (a : ActivationFunction Scalar) (A : Architecture) :
+    Set ((Fin A.inputs → Scalar) → (Fin A.outputs → Scalar)) :=
+  Set.range fun Φ : NetworkParameters Scalar A => network a Φ
 
 @[simp] theorem hidden_zero (a : ActivationFunction Scalar) (Φ : NetworkParameters Scalar A)
     (x : Fin A.inputs → Scalar) : hidden a Φ x 0 = x :=
