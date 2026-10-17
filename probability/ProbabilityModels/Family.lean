@@ -16,8 +16,9 @@ Mathlib's `ProbabilityMeasure` supplies the measure axioms and normalization.
 The parameter type `Θ` should encode any restrictions needed by the family,
 such as a strictly positive variance when using a Gaussian density.
 
-This is a pointwise family of distributions. Measurability in the input and
-parameter, needed to construct a Markov kernel, is a separate requirement.
+This is a pointwise family of distributions. `Family.toKernel` and
+`Family.predictiveKernel` in `ConditionalDistribution` additionally assume
+measurability to construct Markov kernels.
 -/
 
 @[expose] public section

@@ -437,11 +437,30 @@ order rules with their probability and integrability assumptions, using
 Mathlib's integral proofs. `Examples/Expectation.lean` illustrates discrete
 weighted means and Gaussian means.
 
+`Variance.lean` gives the centered-square and second-moment identities, affine
+transformations, and the almost-sure characterization of zero variance.
+`StandardDeviation.lean` supplies the corresponding affine rule with the
+absolute value of the scale. `Examples/Moments.lean` checks two-outcome and
+Gaussian formulas.
+
 `ProbabilityModels.Notation` collects the notation used by these topics. Open
 the `ProbabilityTheory` and `ProbabilityModels` scopes to write `𝔼[X; P]`,
 `Var[X; P]`, `SD[X; P]`, and `𝒩(m, v)` with an explicit underlying measure.
 
-The `Family` interface is pointwise. Its connections to measurable kernels and
-specified densities for likelihoods remain to be developed. The
-`loss-functions/` directory is reserved for likelihoods and training objectives.
+The conditioning modules expose event-conditioned probabilities, the defining
+identity and tower property of conditional expectation, and regular conditional
+laws. They relate event indicators and conditional means to integrals against
+the conditional law, with the required almost-everywhere qualifications.
+`Family.predictiveKernel` turns a measurable family and predictor into a Markov
+kernel; the Gaussian example proves that its mean equals the predictor's output.
+
+`Family.Density` attaches chosen, finite densities relative to a fixed reference
+measure. Its proofs recover event probabilities, normalization, and expectations,
+and connect predictive density values to the predictive distribution.
+`positiveGaussianDensity` supplies the positive-variance Gaussian case.
+`Examples/Density.lean` verifies its formula and agreement with the Gaussian kernel.
+`Independence.lean` factors event probabilities, joint laws, and expectations of
+products. It also proves additivity of variance under pairwise independence;
+`Examples/Independence.lean` derives the sample-mean variance `v / n`.
+The `loss-functions/` directory is reserved for likelihoods and training objectives.
 See [probability/README.md](probability/README.md) for the file map and current scope.

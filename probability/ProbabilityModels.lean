@@ -12,6 +12,10 @@ public import ProbabilityModels.Density
 public import ProbabilityModels.Independence
 public import ProbabilityModels.Notation
 public import ProbabilityModels.Examples.Expectation
+public import ProbabilityModels.Examples.Conditioning
+public import ProbabilityModels.Examples.Density
+public import ProbabilityModels.Examples.Moments
+public import ProbabilityModels.Examples.Independence
 
 /-!
 # Probability models
@@ -28,4 +32,8 @@ Each topic can also be imported individually, for example
 `ProbabilityModels.Notation` provides a shared notation entry point, with
 explicit measures for expectation and standard deviation.
 `ProbabilityModels.Examples.Expectation` demonstrates discrete and Gaussian means.
+`ProbabilityModels.Examples.Conditioning` builds a Gaussian predictive kernel.
+`ProbabilityModels.Examples.Density` supplies its normalized, pointwise density.
+`ProbabilityModels.Examples.Moments` computes discrete and Gaussian measures of spread.
+`ProbabilityModels.Examples.Independence` derives the variance of a sample mean.
 -/
