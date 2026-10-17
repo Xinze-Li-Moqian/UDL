@@ -14,6 +14,11 @@ perpendicular to its weight vector. The output is still a single scalar,
 `φ₀ + ∑ d, φ_d * h_d`. With `Dᵢ = 2` and ReLU, the network's graph is a
 surface made of flat polygonal pieces.
 
+As in the one-input case, the parameters keep the book's names and the network is
+computed by the matrix-notation foundation: `Parameters.toNetworkParameters`
+arranges them for the architecture `Architecture.ofList Dᵢ [D] 1`, and
+`network_eq` recovers the scalar formula used in proofs.
+
 There are `(Dᵢ + 2) * D + 1` scalar parameters. The one-input model of
 `ShallowNetwork.Model` is the case `Dᵢ = 1`: `ShallowNetworkParameters.toMultiInput`
 embeds it, and `ShallowNetwork.Verification` proves that both compute the same output.
@@ -40,13 +45,29 @@ structure Parameters (Scalar : Type) (Dᵢ D : ℕ) where
   /-- The input coefficients `θ_di`: one weight vector per hidden unit. -/
   hiddenWeights : Fin D → Fin Dᵢ → Scalar
 
-/-- The shallow network with `Dᵢ` inputs, evaluated with a chosen activation function. -/
-def network {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+/-- The parameters in matrix notation for the architecture `Architecture.ofList Dᵢ [D] 1`:
+the hidden layer has bias vector `θ_d0` and the `D × Dᵢ` weight matrix `θ_di`; the
+output layer has bias `φ₀` and the `1 × D` weight matrix `φ_d`. -/
+def Parameters.toNetworkParameters {Scalar : Type} {Dᵢ D : ℕ} (Φ : Parameters Scalar Dᵢ D) :
+    NetworkParameters Scalar (Architecture.ofList Dᵢ [D] 1) :=
+  .cons Φ.hiddenBiases (Matrix.of Φ.hiddenWeights) <|
+  .single (fun _ => Φ.outputBias) (Matrix.of fun _ d => Φ.outputWeights d)
+
+/-- The shallow network with `Dᵢ` inputs, evaluated through the foundation `network`. -/
+def network {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     {Dᵢ D : ℕ} (activation : ActivationFunction Scalar)
     (x : Fin Dᵢ → Scalar) (Φ : Parameters Scalar Dᵢ D) : Scalar :=
-  let h := fun d : Fin D =>
-    hiddenUnit activation (Φ.hiddenBiases d) (Φ.hiddenWeights d) x
-  addBias Φ.outputBias (∑ d : Fin D, Φ.outputWeights d * h d)
+  NeuralNetworks.network activation Φ.toNetworkParameters x (0 : Fin 1)
+
+/-- The output is `φ₀ + ∑ d, φ_d * h_d` with hidden units `h_d = a[θ_d0 + ∑ i, θ_di * x_i]`. -/
+theorem network_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
+    {Dᵢ D : ℕ} (activation : ActivationFunction Scalar)
+    (x : Fin Dᵢ → Scalar) (Φ : Parameters Scalar Dᵢ D) :
+    network activation x Φ =
+      addBias Φ.outputBias
+        (∑ d : Fin D, Φ.outputWeights d *
+          hiddenUnit activation (Φ.hiddenBiases d) (Φ.hiddenWeights d) x) := by
+  simp [network, Parameters.toNetworkParameters, hiddenUnit, addBias, Matrix.mulVec, dotProduct]
 
 end NeuralNetworks.MultiInput
 

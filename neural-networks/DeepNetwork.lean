@@ -14,6 +14,8 @@ This folder holds the book's specific deep networks and their checks.
 
 - `WidthThree`: the book's network with two hidden layers of three units and
   named parameters, equations (4.7)–(4.9).
-- `Verification`: a network with one hidden layer is a shallow network, and the
-  width-three network expands to equation (4.10).
+- `Verification`: the width-three network expands to equation (4.10).
+
+Shallow networks are the foundation's networks with one hidden layer; see
+`ShallowNetwork.Model` and `ShallowNetwork.MultiInput`.
 -/

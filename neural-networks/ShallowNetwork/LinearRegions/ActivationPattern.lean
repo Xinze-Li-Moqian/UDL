@@ -51,7 +51,7 @@ theorem network_eq_sum_active (Φ : Parameters ℝ Dᵢ D) (x : Fin Dᵢ → ℝ
     by_cases h : 0 < preactivation Φ d x
     · simp only [h, ↓reduceIte]; exact max_eq_left h.le
     · simp only [h, ↓reduceIte]; exact max_eq_right (not_lt.mp h)
-  simp only [network, addBias, unit, mul_ite, mul_zero, activationPattern, Finset.sum_filter]
+  simp only [network_eq, addBias, unit, mul_ite, mul_zero, activationPattern, Finset.sum_filter]
 
 /-- The network is affine on each activation pattern. -/
 theorem affine_on_pattern (Φ : Parameters ℝ Dᵢ D) (P : Finset (Fin D)) :

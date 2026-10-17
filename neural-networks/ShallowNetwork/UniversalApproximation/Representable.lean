@@ -92,7 +92,7 @@ variable {Dᵢ : ℕ}
 /-- A constant is the output bias of a zero-width network. -/
 theorem const (c : ℝ) : ReLURepresentable (Dᵢ := Dᵢ) fun _ => c :=
   ⟨0, ⟨c, Fin.elim0, Fin.elim0, Fin.elim0⟩, fun x => by
-    simp [network, addBias]⟩
+    simp [network_eq, addBias]⟩
 
 /-- Sums of networks: place the hidden units side by side. -/
 theorem add {f g : (Fin Dᵢ → ℝ) → ℝ} (hf : ReLURepresentable f) (hg : ReLURepresentable g) :
@@ -105,7 +105,7 @@ theorem add {f g : (Fin Dᵢ → ℝ) → ℝ} (hf : ReLURepresentable f) (hg : 
     Fin.append Φ₁.hiddenWeights Φ₂.hiddenWeights⟩, fun x => ?_⟩
   show _ = f x + g x
   rw [← h₁ x, ← h₂ x]
-  simp only [network, addBias, Fin.sum_univ_add, Fin.append_left, Fin.append_right]
+  simp only [network_eq, addBias, Fin.sum_univ_add, Fin.append_left, Fin.append_right]
   ring
 
 /-- Scaling a network scales its output bias and output weights. -/
@@ -116,7 +116,7 @@ theorem mul_left {f : (Fin Dᵢ → ℝ) → ℝ} (c : ℝ) (hf : ReLURepresenta
     Φ.hiddenBiases, Φ.hiddenWeights⟩, fun x => ?_⟩
   show _ = c * f x
   rw [← h x]
-  simp only [network, addBias, mul_add, Finset.mul_sum, mul_assoc]
+  simp only [network_eq, addBias, mul_add, Finset.mul_sum, mul_assoc]
 
 /-- A one-input network applied to `∑ i, w i * x i` is a network with `Dᵢ` inputs:
 each hidden weight `θ_d` becomes the weight vector `θ_d • w`. -/
@@ -124,7 +124,7 @@ theorem comp_linear {D : ℕ} (Φ : ShallowNetworkParameters ℝ D) (w : Fin D�
     ReLURepresentable fun x => shallowNetwork relu (∑ i, w i * x i) Φ :=
   ⟨D, ⟨Φ.outputBias, Φ.outputWeights, Φ.hiddenBiases,
     fun d i => Φ.hiddenWeights d * w i⟩, fun x => by
-    simp only [network, shallowNetwork_eq, hiddenUnit, NeuralNetworks.hiddenUnit,
+    simp only [network_eq, shallowNetwork_eq, hiddenUnit, NeuralNetworks.hiddenUnit,
       Finset.mul_sum, mul_assoc]⟩
 
 end ReLURepresentable

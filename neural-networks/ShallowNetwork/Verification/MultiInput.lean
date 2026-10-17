@@ -17,11 +17,11 @@ namespace NeuralNetworks
 namespace MultiInput
 
 /-- With no hidden units, only the output bias remains, for any number of inputs. -/
-theorem network_zero_width {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+theorem network_zero_width {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     {Dᵢ : ℕ} (activation : ActivationFunction Scalar) (x : Fin Dᵢ → Scalar)
     (Φ : Parameters Scalar Dᵢ 0) :
     network activation x Φ = Φ.outputBias := by
-  simp [network, addBias]
+  simp [network_eq, addBias]
 
 end MultiInput
 
@@ -32,7 +32,7 @@ theorem shallowNetwork_eq_multiInput {Scalar : Type} [NonUnitalNonAssocSemiring 
     (Φ : ShallowNetworkParameters Scalar D) :
     shallowNetwork activation x Φ =
       MultiInput.network activation (fun _ => x) Φ.toMultiInput := by
-  simp [shallowNetwork_eq, MultiInput.network, hiddenUnit, MultiInput.hiddenUnit,
+  simp [shallowNetwork_eq, MultiInput.network_eq, hiddenUnit, MultiInput.hiddenUnit,
     ShallowNetworkParameters.toMultiInput]
 
 end NeuralNetworks

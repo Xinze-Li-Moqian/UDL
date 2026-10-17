@@ -163,9 +163,12 @@ namespace. `WidthThree.Parameters` retains its ten named parameters;
 inputs (Sections 3.3–3.4), still with one output. The input is a vector
 `x : Fin Dᵢ → Scalar`, and each hidden unit has a bias and a weight vector:
 `h_d = a[θ_d0 + ∑ i, θ_di * x_i]`. The namespace `NeuralNetworks.MultiInput`
-contains `hiddenUnit`, `Parameters Scalar Dᵢ D`, and `network`.
-`ShallowNetworkParameters.toMultiInput` views one-input parameters as the case
-`Dᵢ = 1`.
+contains `hiddenUnit`, `Parameters Scalar Dᵢ D`, and `network`. As in the
+one-input case, the parameters keep the book's names, `toNetworkParameters`
+arranges them for the architecture `Architecture.ofList Dᵢ [D] 1`, and `network`
+evaluates that network on the foundation; `MultiInput.network_eq` recovers the
+scalar formula. `ShallowNetworkParameters.toMultiInput` views one-input parameters
+as the case `Dᵢ = 1`.
 
 `neural-networks/ShallowNetwork/Verification/` checks that the definitions mean
 what they claim. These are consistency checks, not new mathematical results:
@@ -307,8 +310,9 @@ deep network of equation (4.15). Parameters can also be built layer by layer, as
 in the nested form of equation (4.16): `single β Ω` has no hidden layers, and
 `cons β₀ Ω₀ rest` puts a hidden layer in front of `rest`; `network_single` and
 `network_cons` evaluate them. `Network/Verification.lean` checks that `ofList`
-has the expected depth and capacity. The shallow and composed networks will be
-rebuilt on this foundation one step at a time.
+has the expected depth and capacity. Shallow networks, with one or several inputs,
+are the foundation's networks with one hidden layer (see Chapter 3); the composed
+networks will be rebuilt on it next.
 
 Composed networks (Section 4.1) and deep networks (Sections 4.3–4.4) are separate
 concepts with separate folders. Section 4.2, which shows that composed networks
@@ -336,9 +340,5 @@ twelve `ψ` for the second, and four `φ'` for the output.
 `cons` and `single` into the bias vectors and weight matrices of equations
 (4.11)–(4.13) for the architecture `ofList 1 [3, 3] 1`, and `WidthThree.deepNetwork`
 evaluates the network at a scalar input. `DeepNetwork/Verification.lean` checks
-that a network with one hidden layer is a shallow network:
-`MultiInput.Parameters.toDeep` converts a shallow network with `Dᵢ` inputs and
-width `D` into parameters for `ofList Dᵢ [D] 1`, and `network_toDeep` shows that
-both compute the same output; that architecture has depth one and capacity `D`
-(`toDeep_architecture`). It also checks that the width-three network expands to
-the single expression of equation (4.10) (`WidthThree.deepNetwork_eq`).
+that the width-three network expands to the single expression of equation (4.10)
+(`WidthThree.deepNetwork_eq`).
