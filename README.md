@@ -90,11 +90,15 @@ to see the three exact values `7`, `7`, and `1`, followed by the training result
 This topic is being developed one definition at a time, starting with Section 3.1.
 `neural-networks/ActivationFunction.lean` defines the type of a scalar activation
 function, `Scalar → Scalar`, and ReLU: preserve nonnegative inputs and return zero
-for negative inputs.
+for negative inputs. Call `relu z` for zero bias, or `relu z bias` to add a bias
+before rectifying; `relu z (bias := bias)` is the equivalent named form.
 
-`neural-networks/ShallowNetwork.lean` imports the activation definitions and defines
-a hidden unit, `activation (bias + weight * x)`. It then builds the three hidden
-units from equation (3.3) and combines them as
+`neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
+constant offset represented by the orange edges in the network diagram.
+`neural-networks/ShallowNetwork.lean` imports these definitions and defines
+a hidden unit, `activation (addBias bias (weight * x))`. Passing `relu` here uses
+its default zero bias, so the hidden unit supplies the offset. It then builds
+the three hidden units from equation (3.3) and combines them as
 `φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`, equation (3.4). The activation function is
 an argument; passing `relu` gives the book's ReLU network.
 `ShallowNetworkParameters` packages the ten parameters into one object `Φ`;
@@ -103,11 +107,17 @@ that object, corresponding to the notation `fₐ(x; Φ)`.
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
 
-`neural-networks/ShallowNetworkExample.lean` constructs a concrete parameter object
-and evaluates `f x Φ` with exact rational arithmetic. It uses
-`ReLU(x) - 2 * ReLU(x - 1) + ReLU(x - 2)`, printing all three hidden activations
-and the output at several inputs. For example, at `x = 3/2`, the hidden values
-are `(3/2, 1/2, 0)` and the output is `1/2`. Run:
+`neural-networks/ShallowNetworkExample.lean` uses two separate `#eval` blocks over
+the same inputs, printing the hidden activations and `f x Φ` with exact rational
+arithmetic. **Without bias** keeps the weights and sets all biases to zero,
+calling `relu z` with its default bias. **With bias** uses the original parameters
+and passes the bias explicitly to `relu`.
+
+The original parameters give `ReLU(x) - 2 * ReLU(x - 1) + ReLU(x - 2)`.
+At `x = 3/2`, the hidden values are `(3/2, 1/2, 0)` and the output is `1/2`.
+Without bias, the hidden units coincide, and these particular output weights
+cancel to give zero. The original output bias is already zero, so this comparison
+illustrates the effect of the hidden biases. Run:
 
 ```sh
 lake env lean neural-networks/ShallowNetworkExample.lean

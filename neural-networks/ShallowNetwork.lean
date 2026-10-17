@@ -1,6 +1,7 @@
 module
 
 public import ActivationFunction
+public import Bias
 
 /-!
 # A network with three hidden units
@@ -20,7 +21,7 @@ namespace NeuralNetworks
 def hiddenUnit {Scalar : Type} [Add Scalar] [Mul Scalar]
     (activation : ActivationFunction Scalar)
     (bias weight x : Scalar) : Scalar :=
-  activation (bias + weight * x)
+  activation (addBias bias (weight * x))
 
 /-- The one-input, three-hidden-unit, one-output network.
 The six θ parameters define the hidden units; the four φ parameters combine
@@ -36,7 +37,7 @@ def shallowNetwork {Scalar : Type} [Add Scalar] [Mul Scalar]
   let h₂ := hiddenUnit activation θ₂₀ θ₂₁ x
   let h₃ := hiddenUnit activation θ₃₀ θ₃₁ x
   -- Equation (3.4): combine the hidden activations.
-  φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃
+  addBias φ₀ (φ₁ * h₁) + φ₂ * h₂ + φ₃ * h₃
 
 /-- The ten parameters, collected into the book's single parameter object `Φ`.
 The φ fields combine the hidden activations; each θ pair defines a hidden unit. -/

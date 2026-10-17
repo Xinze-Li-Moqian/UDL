@@ -26,9 +26,9 @@ def examplePlotData : Array Json :=
   let number : ℚ → Json := fun q => toJson (q.num.toFloat / q.den.toFloat)
   (Array.range 81).map fun (i : Nat) =>
     let x : ℚ := (i : ℚ) / 20 - 1
-    let z₁ := Φ.θ₁₀ + Φ.θ₁₁ * x
-    let z₂ := Φ.θ₂₀ + Φ.θ₂₁ * x
-    let z₃ := Φ.θ₃₀ + Φ.θ₃₁ * x
+    let z₁ := addBias Φ.θ₁₀ (Φ.θ₁₁ * x)
+    let z₂ := addBias Φ.θ₂₀ (Φ.θ₂₁ * x)
+    let z₃ := addBias Φ.θ₃₀ (Φ.θ₃₁ * x)
     let h₁ := hiddenUnit relu Φ.θ₁₀ Φ.θ₁₁ x
     let h₂ := hiddenUnit relu Φ.θ₂₀ Φ.θ₂₁ x
     let h₃ := hiddenUnit relu Φ.θ₃₀ Φ.θ₃₁ x
