@@ -15,7 +15,7 @@ applied to a list of two networks of width three.
 namespace NeuralNetworks.WidthThree
 
 /-- Equations (4.1)–(4.4) are `composedNetwork` on the list `[⟨3, Φ⟩, ⟨3, Φ'⟩]`. -/
-theorem composedNetwork_eq {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+theorem composedNetwork_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar) (x : Scalar) (Φ Φ' : Parameters Scalar) :
     composedNetwork activation x Φ Φ' =
       NeuralNetworks.composedNetwork activation

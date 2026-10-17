@@ -27,12 +27,12 @@ end MultiInput
 
 /-- The one-input model is the multi-input model with `Dᵢ = 1`:
 feeding `x` as the only input component gives the same output. -/
-theorem shallowNetwork_eq_multiInput {Scalar : Type} [AddCommMonoid Scalar]
-    [Mul Scalar] {D : ℕ} (activation : ActivationFunction Scalar) (x : Scalar)
+theorem shallowNetwork_eq_multiInput {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
+    {D : ℕ} (activation : ActivationFunction Scalar) (x : Scalar)
     (Φ : ShallowNetworkParameters Scalar D) :
     shallowNetwork activation x Φ =
       MultiInput.network activation (fun _ => x) Φ.toMultiInput := by
-  simp [shallowNetwork, MultiInput.network, hiddenUnit, MultiInput.hiddenUnit,
-    ShallowNetworkParameters.toMultiInput, one_nsmul]
+  simp [shallowNetwork_eq, MultiInput.network, hiddenUnit, MultiInput.hiddenUnit,
+    ShallowNetworkParameters.toMultiInput]
 
 end NeuralNetworks

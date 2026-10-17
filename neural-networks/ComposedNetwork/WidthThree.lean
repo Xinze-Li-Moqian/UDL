@@ -18,7 +18,7 @@ first network and `Φ'` for the second.
 namespace NeuralNetworks.WidthThree
 
 /-- Equations (4.1)–(4.4): the output `y` of the first network is the input of the second. -/
-def composedNetwork {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+def composedNetwork {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar)
     (x : Scalar) (Φ Φ' : Parameters Scalar) : Scalar :=
   networkWithParameters activation (networkWithParameters activation x Φ) Φ'

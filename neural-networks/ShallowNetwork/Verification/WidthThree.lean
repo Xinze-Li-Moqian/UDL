@@ -16,8 +16,8 @@ namespace NeuralNetworks
 namespace WidthThree
 
 /-- The book's width-three interface calls the model at `D = 3`. -/
-theorem networkWithParameters_eq {Scalar : Type} [AddCommMonoid Scalar]
-    [Mul Scalar] (activation : ActivationFunction Scalar) (x : Scalar)
+theorem networkWithParameters_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
+    (activation : ActivationFunction Scalar) (x : Scalar)
     (Φ : Parameters Scalar) :
     networkWithParameters activation x Φ =
       shallowNetwork activation x Φ.toShallowNetworkParameters :=
@@ -25,7 +25,7 @@ theorem networkWithParameters_eq {Scalar : Type} [AddCommMonoid Scalar]
 
 /-- At width three, the output is `φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`,
 where each `hᵢ` is a hidden activation. -/
-theorem network_eq {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+theorem network_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar)
     (φ₀ φ₁ φ₂ φ₃ : Scalar)
     (θ₁₀ θ₁₁ θ₂₀ θ₂₁ θ₃₀ θ₃₁ : Scalar) (x : Scalar) :
@@ -33,7 +33,7 @@ theorem network_eq {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
       φ₀ + φ₁ * hiddenUnit activation θ₁₀ θ₁₁ x +
         φ₂ * hiddenUnit activation θ₂₀ θ₂₁ x +
         φ₃ * hiddenUnit activation θ₃₀ θ₃₁ x := by
-  simp [network, networkWithParameters, shallowNetwork,
+  simp [network, networkWithParameters, shallowNetwork_eq,
     Parameters.toShallowNetworkParameters, Fin.sum_univ_three, addBias, add_assoc]
 
 end WidthThree

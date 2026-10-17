@@ -39,13 +39,13 @@ def Parameters.toShallowNetworkParameters {Scalar : Type}
     hiddenWeights := ![Φ.θ₁₁, Φ.θ₂₁, Φ.θ₃₁] }
 
 /-- The width-three case, written as `fₐ(x; Φ)` with the book's named parameters. -/
-def networkWithParameters {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+def networkWithParameters {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar)
     (x : Scalar) (Φ : Parameters Scalar) : Scalar :=
   shallowNetwork activation x Φ.toShallowNetworkParameters
 
 /-- The same width-three network with the ten parameters supplied individually. -/
-def network {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+def network {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar)
     (φ₀ φ₁ φ₂ φ₃ : Scalar)
     (θ₁₀ θ₁₁ θ₂₀ θ₂₁ θ₃₀ θ₃₁ : Scalar)

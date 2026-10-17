@@ -22,7 +22,7 @@ of two width-three networks is in `ComposedNetwork.WidthThree`.
 namespace NeuralNetworks
 
 /-- Compose shallow networks in order: each output is the next network's input. -/
-def composedNetwork {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
+def composedNetwork {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar) :
     List (Σ D, ShallowNetworkParameters Scalar D) → Scalar → Scalar
   | [], x => x

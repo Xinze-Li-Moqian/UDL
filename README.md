@@ -132,17 +132,22 @@ type; the proofs about ReLU networks use this form.
 `neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
 constant offset represented by the orange edges in the network diagram.
 
-`neural-networks/ShallowNetwork/Model.lean` imports `ActivationFunction` and
-defines the default shallow network for any hidden width `D`, following
-equations (3.5)–(3.6).
+`neural-networks/ShallowNetwork/Model.lean` defines the shallow network for any
+hidden width `D`, following equations (3.5)–(3.6), on top of the matrix-notation
+foundation in `Network/`.
 It defines `hiddenUnit` as `activation (addBias bias (weight * x))` and
 `ShallowNetworkParameters Scalar D` with an output bias and three
 collections indexed by `Fin D`: output weights, hidden biases, and hidden weights.
-`shallowNetwork activation x Φ` sums the weighted hidden activations and adds the
-output bias. Lean numbers the units from `0` to `D - 1`.
+These keep the book's Chapter 3 names. `toNetworkParameters` arranges them as in
+equation (4.14), `h = a[θ₀ + θ x]` and `y = φ₀ + φ h`, for the architecture
+`Architecture.ofList 1 [D] 1`, and `shallowNetwork activation x Φ` evaluates that
+network. `shallowNetwork_eq` recovers the scalar formula: the output bias plus
+the weighted hidden activations. The proofs about shallow networks use this
+formula. Lean numbers the units from `0` to `D - 1`.
 
-`networkCapacity Φ` returns the number of hidden units `D`, the width-based
-capacity measure used in Section 3.2. It depends on the network architecture,
+`networkCapacity Φ` is the capacity of that architecture, the number of hidden
+units `D` (`networkCapacity_eq`), the width-based capacity measure used in
+Section 3.2. It depends on the network architecture,
 not the parameter values, and is not a norm. Both examples report capacity `3`,
 even though the chosen weights in the example without biases yield zero output.
 
@@ -165,7 +170,8 @@ contains `hiddenUnit`, `Parameters Scalar Dᵢ D`, and `network`.
 `neural-networks/ShallowNetwork/Verification/` checks that the definitions mean
 what they claim. These are consistency checks, not new mathematical results:
 
-- `Model.lean`: zero width leaves only the output bias (`shallowNetwork_zero_width`).
+- `Model.lean`: zero width leaves only the output bias (`shallowNetwork_zero_width`),
+  and a width-`D` network has capacity `D` (`networkCapacity_eq`).
 - `WidthThree.lean`: `WidthThree.networkWithParameters_eq` and
   `WidthThree.network_eq` verify that the wrappers use the same model and expand
   to the book's formula.

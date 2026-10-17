@@ -34,12 +34,12 @@ namespace ReLURepresentable
 /-- A constant is the output bias of a zero-width network. -/
 theorem const (c : ℝ) : ReLURepresentable fun _ => c :=
   ⟨0, ⟨c, Fin.elim0, Fin.elim0, Fin.elim0⟩, fun x => by
-    simp [shallowNetwork, addBias]⟩
+    simp [shallowNetwork_eq, addBias]⟩
 
 /-- `relu (x - t)` is a single hidden unit with bias `-t` and weight `1`. -/
 theorem relu_sub (t : ℝ) : ReLURepresentable fun x => relu (x - t) :=
   ⟨1, ⟨0, fun _ => 1, fun _ => -t, fun _ => 1⟩, fun x => by
-    simp [shallowNetwork, hiddenUnit, addBias, sub_eq_neg_add]⟩
+    simp [shallowNetwork_eq, hiddenUnit, addBias, sub_eq_neg_add]⟩
 
 /-- Sums of networks: place the hidden units side by side and add the output biases. -/
 theorem add {f g : ℝ → ℝ} (hf : ReLURepresentable f) (hg : ReLURepresentable g) :
@@ -52,7 +52,7 @@ theorem add {f g : ℝ → ℝ} (hf : ReLURepresentable f) (hg : ReLURepresentab
     Fin.append Φ₁.hiddenWeights Φ₂.hiddenWeights⟩, fun x => ?_⟩
   show _ = f x + g x
   rw [← h₁ x, ← h₂ x]
-  simp only [shallowNetwork, addBias, Fin.sum_univ_add, Fin.append_left, Fin.append_right]
+  simp only [shallowNetwork_eq, addBias, Fin.sum_univ_add, Fin.append_left, Fin.append_right]
   ring
 
 /-- Scaling a network scales its output bias and output weights. -/
@@ -63,7 +63,7 @@ theorem mul_left {f : ℝ → ℝ} (c : ℝ) (hf : ReLURepresentable f) :
     Φ.hiddenBiases, Φ.hiddenWeights⟩, fun x => ?_⟩
   show _ = c * f x
   rw [← h x]
-  simp only [shallowNetwork, addBias, mul_add, Finset.mul_sum, mul_assoc]
+  simp only [shallowNetwork_eq, addBias, mul_add, Finset.mul_sum, mul_assoc]
 
 /-- Finite sums of representable functions are representable. -/
 theorem sum {ι : Type*} (s : Finset ι) {f : ι → ℝ → ℝ}
@@ -124,7 +124,7 @@ theorem comp_linear {D : ℕ} (Φ : ShallowNetworkParameters ℝ D) (w : Fin D�
     ReLURepresentable fun x => shallowNetwork relu (∑ i, w i * x i) Φ :=
   ⟨D, ⟨Φ.outputBias, Φ.outputWeights, Φ.hiddenBiases,
     fun d i => Φ.hiddenWeights d * w i⟩, fun x => by
-    simp only [network, shallowNetwork, hiddenUnit, NeuralNetworks.hiddenUnit,
+    simp only [network, shallowNetwork_eq, hiddenUnit, NeuralNetworks.hiddenUnit,
       Finset.mul_sum, mul_assoc]⟩
 
 end ReLURepresentable

@@ -90,7 +90,7 @@ theorem linearRegionBound : LinearRegionBound := by
   -- So is their weighted sum.
   refine ⟨∑ d, Φ.outputWeights d * m d,
     Φ.outputBias + ∑ d, Φ.outputWeights d * c d, fun x hx => ?_⟩
-  simp only [shallowNetwork, addBias, hmc _ x hx, mul_add, Finset.sum_add_distrib,
+  simp only [shallowNetwork_eq, addBias, hmc _ x hx, mul_add, Finset.sum_add_distrib,
     Finset.sum_mul, mul_assoc]
   ring
 
