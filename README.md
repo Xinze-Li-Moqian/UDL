@@ -87,7 +87,24 @@ to see the three exact values `7`, `7`, and `1`, followed by the training result
 
 ## Chapter 3: Shallow Neural Networks
 
-This topic is being developed one definition at a time, starting with Section 3.1.
+This topic is being developed one definition at a time through Sections 3.1–3.2.
+The files separate definitions, proofs, and demonstrations:
+
+```text
+neural-networks/
+├── Bias.lean
+├── ActivationFunction.lean
+├── ShallowNetwork.lean          # Library entry point
+├── ShallowNetwork/
+│   ├── Model.lean               # Shallow network definitions
+│   ├── WidthThree.lean          # The book's three-unit case
+│   └── Verification.lean        # Proofs
+└── Example/
+    ├── Plot.lean                # Shared sampling and plotting helpers
+    ├── WithBias.lean            # Numerical example and plots
+    └── WithoutBias.lean         # Numerical example and plots
+```
+
 `neural-networks/ActivationFunction.lean` defines the type of a scalar activation
 function, `Scalar → Scalar`, and ReLU: preserve nonnegative inputs and return zero
 for negative inputs. Call `relu z` for zero bias, or `relu z bias` to add a bias
@@ -95,43 +112,63 @@ before rectifying; `relu z (bias := bias)` is the equivalent named form.
 
 `neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
 constant offset represented by the orange edges in the network diagram.
-`neural-networks/ShallowNetwork.lean` imports these definitions and defines
-a hidden unit, `activation (addBias bias (weight * x))`. Passing `relu` here uses
-its default zero bias, so the hidden unit supplies the offset. It then builds
-the three hidden units from equation (3.3) and combines them as
-`φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`, equation (3.4). The activation function is
-an argument; passing `relu` gives the book's ReLU network.
-`ShallowNetworkParameters` packages the ten parameters into one object `Φ`;
-`shallowNetworkWithParameters activation x Φ` evaluates the same network using
-that object, corresponding to the notation `fₐ(x; Φ)`.
+
+`neural-networks/ShallowNetwork/Model.lean` imports `ActivationFunction` and
+defines the default shallow network for any hidden width `D`, following
+equations (3.5)–(3.6).
+It defines `hiddenUnit` as `activation (addBias bias (weight * x))` and
+`ShallowNetworkParameters Scalar D` with an output bias and three
+collections indexed by `Fin D`: output weights, hidden biases, and hidden weights.
+`shallowNetwork activation x Φ` sums the weighted hidden activations and adds the
+output bias. Lean numbers the units from `0` to `D - 1`.
+
+`neural-networks/ShallowNetwork/WidthThree.lean` imports `ShallowNetwork.Model`
+and places the book's three-unit case in the `NeuralNetworks.WidthThree`
+namespace. `WidthThree.Parameters` retains its ten named parameters;
+`WidthThree.Parameters.toShallowNetworkParameters` converts them to
+`ShallowNetworkParameters Scalar 3`. Both `WidthThree.networkWithParameters` and
+`WidthThree.network` reuse `shallowNetwork`, giving equation (3.4),
+`φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`.
+
+`neural-networks/ShallowNetwork/Verification.lean` proves that zero width leaves
+only the output bias (`shallowNetwork_zero_width`). Its three-unit results,
+`WidthThree.networkWithParameters_eq` and `WidthThree.network_eq`, verify that
+the wrappers use the same model and expand to the book's formula.
+Definitions depend only on earlier layers:
+`WidthThree` imports `Model`, which imports `ActivationFunction`, which imports
+`Bias`. Proofs build on those definitions; examples and plots build on the library.
+`neural-networks/ShallowNetwork.lean` is the entry point importing `Model`,
+`WidthThree`, and `Verification`. Demonstrations remain separate imports.
+The universal approximation theorem itself is not yet formalized.
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
 
-`neural-networks/ShallowNetworkExample.lean` uses two separate `#eval` blocks over
-the same inputs, printing the hidden activations and `f x Φ` with exact rational
-arithmetic. **Without bias** keeps the weights and sets all biases to zero,
-calling `relu z` with its default bias. **With bias** uses the original parameters
-and passes the bias explicitly to `relu`.
+`neural-networks/Example/WithBias.lean` and `WithoutBias.lean` each contain a
+complete numerical and visual example. Their namespaces are
+`NeuralNetworks.Examples.WithBias` and `NeuralNetworks.Examples.WithoutBias`.
+Each defines `parameters : ShallowNetworkParameters ℚ 3` and uses `#eval` to print
+hidden activations and the output of `shallowNetwork` with exact rational
+arithmetic. Both examples use hidden weights `(1, 1, 1)`, output weights
+`(1, -2, 1)`, and zero output bias. **With bias** uses hidden biases `(0, -1, -2)`;
+**without bias** sets all hidden biases to zero.
 
-The original parameters give `ReLU(x) - 2 * ReLU(x - 1) + ReLU(x - 2)`.
+The example with bias gives `ReLU(x) - 2 * ReLU(x - 1) + ReLU(x - 2)`.
 At `x = 3/2`, the hidden values are `(3/2, 1/2, 0)` and the output is `1/2`.
 Without bias, the hidden units coincide, and these particular output weights
-cancel to give zero. The original output bias is already zero, so this comparison
-illustrates the effect of the hidden biases. Run:
+cancel to give zero. The comparison illustrates the effect of the hidden biases.
+Run either example:
 
 ```sh
-lake env lean neural-networks/ShallowNetworkExample.lean
+lake env lean neural-networks/Example/WithBias.lean
+lake env lean neural-networks/Example/WithoutBias.lean
 ```
 
-For a visual example, open `neural-networks/ActivationPlot.lean` in VS Code with
-the Lean extension and place the cursor on `#html activationPlots`. The Lean
-Infoview shows the same example's three affine inputs, ReLU activations, weighted
-contributions, and final output using ProofWidgets. All panels use the existing
-`exampleParameters` and evaluate 81 rational inputs from `-1` to `3`; coordinates
-are converted to floats only for plotting and joined with straight segments.
-At `x = 1.5`, the three contributions are `1.5`, `-1`, and `0`, giving `y = 0.5`.
-Export the same plotted data as JSON with:
+Open either example file in VS Code with the Lean extension and place the cursor
+on `#html plot`. The Lean Infoview shows ten charts: three affine inputs, three
+ReLU activations, three weighted contributions, and the final output. Each file
+also exposes its sampled chart data as JSON through `plotData`.
 
-```sh
-lake env lean --run neural-networks/ActivationPlot.lean
-```
+Both examples import `neural-networks/Example/Plot.lean` for shared sampling
+and ProofWidgets plotting functions. This helper imports `ShallowNetwork.Model`
+and is independent of the example parameters. Each example supplies its own
+parameters to the numerical evaluation and the charts.
