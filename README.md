@@ -272,6 +272,10 @@ parameters to the numerical evaluation and the charts.
 
 ```text
 neural-networks/
+├── Network.lean                 # Entry point for the foundation
+├── Network/
+│   ├── Model.lean               # Matrix-notation networks, equation (4.15)
+│   └── Verification.lean        # Definition checks
 ├── ComposedNetwork.lean         # Entry point for Section 4.1
 ├── ComposedNetwork/
 │   ├── Model.lean               # Shallow networks composed in order
@@ -279,10 +283,26 @@ neural-networks/
 │   └── Verification.lean        # Definition checks
 ├── DeepNetwork.lean             # Entry point for Sections 4.3–4.4
 └── DeepNetwork/
-    ├── Model.lean               # Deep networks in matrix notation
     ├── WidthThree.lean          # Two layers of three units, named parameters
     └── Verification.lean        # Definition checks
 ```
+
+`neural-networks/Network/` is the linear-algebra foundation shared by all
+networks. Vectors (`Fin D → Scalar`), matrices (`Matrix`), matrix-vector products
+(`Ω *ᵥ h`), and vector addition come from Mathlib; the folder defines only the
+book's network terms. `Architecture` holds the hyperparameters: the depth `K` and
+the layer sizes `D₀ = Dᵢ, D₁, …, D_K, D_{K+1} = Dₒ`, numbered as in the book,
+with `capacity` the total number of hidden units; `Architecture.ofList Dᵢ widths Dₒ`
+builds one from its hidden widths. `NetworkParameters Scalar A` holds
+`φ = {β_k, Ω_k}`, where `β_k` has size `D_{k+1}` and `Ω_k` is `D_{k+1} × D_k`.
+`hidden a Φ x k` is the hidden layer `h_k = a ∘ (β_{k-1} + Ω_{k-1} h_{k-1})`
+(with `h₀ = x`) and `network a Φ x` is the output `y = β_K + Ω_K h_K`, the general
+deep network of equation (4.15). Parameters can also be built layer by layer, as
+in the nested form of equation (4.16): `single β Ω` has no hidden layers, and
+`cons β₀ Ω₀ rest` puts a hidden layer in front of `rest`; `network_single` and
+`network_cons` evaluate them. `Network/Verification.lean` checks that `ofList`
+has the expected depth and capacity. The shallow and composed networks will be
+rebuilt on this foundation one step at a time.
 
 Composed networks (Section 4.1) and deep networks (Sections 4.3–4.4) are separate
 concepts with separate folders. Section 4.2, which shows that composed networks
@@ -301,32 +321,18 @@ Chapter 3. `ComposedNetwork/Verification.lean` checks that this example is the
 general composition applied to the list of the two networks
 (`WidthThree.composedNetwork_eq`).
 
-`neural-networks/DeepNetwork/Model.lean` defines deep networks in the general
-form of Section 4.4: `h₁ = a[β₀ + Ω₀ x]`, `h_k = a[β_{k-1} + Ω_{k-1} h_{k-1}]`,
-and `y = β_K + Ω_K h_K`, with `Dᵢ` inputs and `Dₒ` outputs. `LayerParameters`
-holds one layer's bias vector `β` and weight matrix `Ω`.
-`DeepNetworkParameters Scalar Dᵢ widths Dₒ` holds one layer per hidden width plus
-the output layer; the hidden widths are part of the type, so consecutive layers
-always have matching sizes. `deepNetwork activation Φ x` evaluates equation
-(4.16), applying the layers `h ↦ a[β + Ω h]` in turn and then the output layer.
-For example, `DeepNetworkParameters ℝ 1 [3, 3] 1` is the two-layer network of
-Section 4.3. The hyperparameters of Section 4.3.1 are read off the type:
-`Φ.depth` is the number of hidden layers `K`, `Φ.width k` is the number of
-hidden units `D_k` in layer `k` (numbered from `0`), and `Φ.capacity` is the total
-number of hidden units.
-
-`neural-networks/DeepNetwork/WidthThree.lean` gives that network with the book's
-named parameters, equations (4.7)–(4.9): six `θ` for the first layer, twelve `ψ`
-for the second, and four `φ'` for the output. `WidthThree.DeepParameters` stores
-them, `toDeepNetworkParameters` arranges them into the bias vectors and weight
-matrices of equations (4.11)–(4.13), and `WidthThree.deepNetwork` evaluates the
-network at a scalar input.
-
-`DeepNetwork/Verification.lean` checks that a deep network with one hidden layer
-is a shallow network: `MultiInput.Parameters.toDeep` converts a shallow network
-with `Dᵢ` inputs and width `D` into a deep network with hidden widths `[D]`, and
-`deepNetwork_toDeep` shows that both compute the same output; the converted
-network has depth one and capacity `D` (`toDeep_capacity`). The capacity is the
-sum of the layer widths (`capacity_eq_sum_width`). It also checks that
-the width-three network expands to the single expression of equation (4.10)
-(`WidthThree.deepNetwork_eq`).
+`neural-networks/DeepNetwork/` holds the book's specific deep networks; the
+general deep network is the foundation in `Network/`.
+`DeepNetwork/WidthThree.lean` gives the two-layer network of Section 4.3 with the
+book's named parameters, equations (4.7)–(4.9): six `θ` for the first layer,
+twelve `ψ` for the second, and four `φ'` for the output.
+`WidthThree.DeepParameters` stores them, `toNetworkParameters` arranges them with
+`cons` and `single` into the bias vectors and weight matrices of equations
+(4.11)–(4.13) for the architecture `ofList 1 [3, 3] 1`, and `WidthThree.deepNetwork`
+evaluates the network at a scalar input. `DeepNetwork/Verification.lean` checks
+that a network with one hidden layer is a shallow network:
+`MultiInput.Parameters.toDeep` converts a shallow network with `Dᵢ` inputs and
+width `D` into parameters for `ofList Dᵢ [D] 1`, and `network_toDeep` shows that
+both compute the same output; that architecture has depth one and capacity `D`
+(`toDeep_architecture`). It also checks that the width-three network expands to
+the single expression of equation (4.10) (`WidthThree.deepNetwork_eq`).

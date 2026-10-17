@@ -1,6 +1,6 @@
 module
 
-public import DeepNetwork.Model
+public import Network
 public import Mathlib.LinearAlgebra.Matrix.Notation
 
 /-!
@@ -9,7 +9,7 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 Source: Understanding Deep Learning, Section 4.3, equations (4.7)–(4.10), and
 Section 4.4, equations (4.11)–(4.13).
 
-The model is defined in `DeepNetwork.Model`. This module fixes one input, two
+The model is defined in `Network`. This module fixes one input, two
 hidden layers of three units, and one output, and retains the book's named
 parameters:
 
@@ -20,9 +20,10 @@ y' = φ'₀ + φ'₁ h'₁ + φ'₂ h'₂ + φ'₃ h'₃      (4.9, output)
 ```
 
 and similarly for `h₂, h₃, h'₂, h'₃`. There are 22 parameters: six `θ`, twelve
-`ψ`, and four `φ'`. `DeepParameters.toDeepNetworkParameters` arranges them into
-the bias vectors and weight matrices of equations (4.11)–(4.13), giving
-`DeepNetworkParameters Scalar 1 [3, 3] 1`.
+`ψ`, and four `φ'`. `DeepParameters.toNetworkParameters` arranges them into the bias
+vectors `β₀, β₁, β₂` and weight matrices `Ω₀, Ω₁, Ω₂` of equations (4.11)–(4.13),
+built layer by layer with `cons` and `single`, for the architecture
+`Architecture.ofList 1 [3, 3] 1`.
 -/
 
 @[expose] public section
@@ -54,17 +55,17 @@ structure DeepParameters (Scalar : Type) where
   φ'₂ : Scalar
   φ'₃ : Scalar
 
-/-- Equations (4.11)–(4.13): the named parameters as bias vectors and weight matrices. -/
-def DeepParameters.toDeepNetworkParameters {Scalar : Type} (Φ : DeepParameters Scalar) :
-    DeepNetworkParameters Scalar 1 [3, 3] 1 :=
-  (⟨![Φ.θ₁₀, Φ.θ₂₀, Φ.θ₃₀], !![Φ.θ₁₁; Φ.θ₂₁; Φ.θ₃₁]⟩,
-    ⟨![Φ.ψ₁₀, Φ.ψ₂₀, Φ.ψ₃₀],
-      !![Φ.ψ₁₁, Φ.ψ₁₂, Φ.ψ₁₃; Φ.ψ₂₁, Φ.ψ₂₂, Φ.ψ₂₃; Φ.ψ₃₁, Φ.ψ₃₂, Φ.ψ₃₃]⟩,
-    ⟨![Φ.φ'₀], !![Φ.φ'₁, Φ.φ'₂, Φ.φ'₃]⟩)
+/-- Equations (4.11)–(4.13): the named parameters as `β₀, Ω₀`, `β₁, Ω₁`, and `β₂, Ω₂`. -/
+def DeepParameters.toNetworkParameters {Scalar : Type} (Φ : DeepParameters Scalar) :
+    NetworkParameters Scalar (Architecture.ofList 1 [3, 3] 1) :=
+  .cons ![Φ.θ₁₀, Φ.θ₂₀, Φ.θ₃₀] !![Φ.θ₁₁; Φ.θ₂₁; Φ.θ₃₁] <|
+  .cons ![Φ.ψ₁₀, Φ.ψ₂₀, Φ.ψ₃₀]
+    !![Φ.ψ₁₁, Φ.ψ₁₂, Φ.ψ₁₃; Φ.ψ₂₁, Φ.ψ₂₂, Φ.ψ₂₃; Φ.ψ₃₁, Φ.ψ₃₂, Φ.ψ₃₃] <|
+  .single ![Φ.φ'₀] !![Φ.φ'₁, Φ.φ'₂, Φ.φ'₃]
 
 /-- The two-layer, width-three network evaluated at a scalar input `x`. -/
 def deepNetwork {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     (activation : ActivationFunction Scalar) (x : Scalar) (Φ : DeepParameters Scalar) : Scalar :=
-  NeuralNetworks.deepNetwork activation Φ.toDeepNetworkParameters (fun _ => x) 0
+  network activation Φ.toNetworkParameters (fun _ : Fin 1 => x) (0 : Fin 1)
 
 end NeuralNetworks.WidthThree

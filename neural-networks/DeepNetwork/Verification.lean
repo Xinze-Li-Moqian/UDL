@@ -1,20 +1,17 @@
 module
 
-public import DeepNetwork.Model
+public import Network
 public import DeepNetwork.WidthThree
 public import ShallowNetwork.MultiInput
 
 /-!
 # Deep network verification
 
-A deep network with one hidden layer is a shallow network:
+A network with one hidden layer is a shallow network:
 `MultiInput.Parameters.toDeep` places a shallow network's hidden and output
-layers in the deep format with widths `[D]`, and `deepNetwork_toDeep` shows that
-the output agrees with `MultiInput.network`.
-
-The capacity is the sum of the layer widths (`capacity_eq_sum_width`), and a
-converted shallow network has the capacity `networkCapacity` assigns it,
-its width `D` (`toDeep_capacity`).
+layers into `β₀, Ω₀` and `β₁, Ω₁` for the architecture `ofList Dᵢ [D] 1`, and
+`network_toDeep` shows that the output agrees with `MultiInput.network`. That
+architecture has depth one and capacity `D` (`toDeep_architecture`).
 
 The book's two-layer, width-three network expands to the single expression of
 equation (4.10) (`WidthThree.deepNetwork_eq`).
@@ -26,37 +23,31 @@ namespace NeuralNetworks
 
 open Matrix
 
-/-- A shallow network with `Dᵢ` inputs and width `D`, as a deep network with
-hidden widths `[D]` and one output. -/
+/-- A shallow network with `Dᵢ` inputs and width `D`, as a network with one hidden layer. -/
 def MultiInput.Parameters.toDeep {Scalar : Type} {Dᵢ D : ℕ}
-    (Φ : MultiInput.Parameters Scalar Dᵢ D) : DeepNetworkParameters Scalar Dᵢ [D] 1 :=
-  (⟨Φ.hiddenBiases, Matrix.of Φ.hiddenWeights⟩,
-    ⟨fun _ => Φ.outputBias, Matrix.of fun _ d => Φ.outputWeights d⟩)
-
-/-- The capacity is the sum of the layer widths `D₁ + ⋯ + D_K`. -/
-theorem DeepNetworkParameters.capacity_eq_sum_width {Scalar : Type} {Dᵢ Dₒ : ℕ}
-    {widths : List ℕ} (Φ : DeepNetworkParameters Scalar Dᵢ widths Dₒ) :
-    Φ.capacity = ∑ k : Fin Φ.depth, Φ.width k :=
-  (Fin.sum_univ_getElem widths).symm
-
-/-- A shallow network of width `D` converts to a deep network of depth one and
-capacity `D`, matching `networkCapacity` for shallow networks. -/
-theorem MultiInput.Parameters.toDeep_capacity {Scalar : Type} {Dᵢ D : ℕ}
     (Φ : MultiInput.Parameters Scalar Dᵢ D) :
-    Φ.toDeep.depth = 1 ∧ Φ.toDeep.capacity = D := by
-  simp [DeepNetworkParameters.depth, DeepNetworkParameters.capacity]
+    NetworkParameters Scalar (Architecture.ofList Dᵢ [D] 1) :=
+  .cons Φ.hiddenBiases (Matrix.of Φ.hiddenWeights) <|
+  .single (fun _ => Φ.outputBias) (Matrix.of fun _ d => Φ.outputWeights d)
 
-/-- With one hidden layer, the deep network computes the shallow network's output. -/
-theorem deepNetwork_toDeep {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
+/-- The converted shallow network has depth one and capacity `D`. -/
+theorem MultiInput.Parameters.toDeep_architecture (Dᵢ D : ℕ) :
+    (Architecture.ofList Dᵢ [D] 1).depth = 1 ∧ (Architecture.ofList Dᵢ [D] 1).capacity = D := by
+  simp [Architecture.ofList_depth_capacity]
+
+/-- With one hidden layer, the network computes the shallow network's output. -/
+theorem network_toDeep {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
     {Dᵢ D : ℕ} (activation : ActivationFunction Scalar) (x : Fin Dᵢ → Scalar)
     (Φ : MultiInput.Parameters Scalar Dᵢ D) :
-    deepNetwork activation Φ.toDeep x 0 = MultiInput.network activation x Φ := by
-  simp [MultiInput.Parameters.toDeep, deepNetwork, LayerParameters.apply,
-    MultiInput.network, MultiInput.hiddenUnit, addBias, mulVec, dotProduct]
+    network activation Φ.toDeep x (0 : Fin 1) = MultiInput.network activation x Φ := by
+  simp [MultiInput.Parameters.toDeep, MultiInput.network, MultiInput.hiddenUnit, addBias,
+    mulVec, dotProduct]
 
 end NeuralNetworks
 
 namespace NeuralNetworks.WidthThree
+
+open Matrix
 
 /-- Equation (4.10): the two-layer, width-three network as one expression. -/
 theorem deepNetwork_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
@@ -69,7 +60,7 @@ theorem deepNetwork_eq {Scalar : Type} [NonUnitalNonAssocSemiring Scalar]
             + Φ.ψ₂₃ * a (Φ.θ₃₀ + Φ.θ₃₁ * x))
         + Φ.φ'₃ * a (Φ.ψ₃₀ + Φ.ψ₃₁ * a (Φ.θ₁₀ + Φ.θ₁₁ * x) + Φ.ψ₃₂ * a (Φ.θ₂₀ + Φ.θ₂₁ * x)
             + Φ.ψ₃₃ * a (Φ.θ₃₀ + Φ.θ₃₁ * x)) := by
-  simp [deepNetwork, NeuralNetworks.deepNetwork, DeepParameters.toDeepNetworkParameters,
-    LayerParameters.apply, addBias, dotProduct, Fin.sum_univ_three, add_assoc]
+  simp [deepNetwork, DeepParameters.toNetworkParameters, dotProduct, Fin.sum_univ_three,
+    add_assoc]
 
 end NeuralNetworks.WidthThree
