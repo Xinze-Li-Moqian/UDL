@@ -105,12 +105,15 @@ neural-networks/
 │   │   ├── WidthThree.lean      # The book's width-three formula
 │   │   └── MultiInput.lean      # Multi-input model checks
 │   ├── UniversalApproximation.lean  # Entry point for the theorem
-│   └── UniversalApproximation/
-│       ├── Representable.lean   # Functions computed by ReLU networks
-│       ├── Interpolation.lean   # Ramps and piecewise-linear interpolation
-│       ├── Ridge.lean           # Ridge functions and the exponential ridge algebra
-│       ├── OneInput.lean        # The theorem for one input
-│       └── MultiInput.lean      # The theorem for several inputs
+│   ├── UniversalApproximation/
+│   │   ├── Representable.lean   # Functions computed by ReLU networks
+│   │   ├── Interpolation.lean   # Ramps and piecewise-linear interpolation
+│   │   ├── Ridge.lean           # Ridge functions and the exponential ridge algebra
+│   │   ├── OneInput.lean        # The theorem for one input
+│   │   └── MultiInput.lean      # The theorem for several inputs
+│   ├── LinearRegions.lean       # Entry point for the region bound
+│   └── LinearRegions/
+│       └── OneInput.lean        # The bound for one input
 └── Example/
     ├── Plot.lean                # Shared sampling and plotting helpers
     ├── WithBias.lean            # Numerical example and plots
@@ -121,6 +124,8 @@ neural-networks/
 function, `Scalar → Scalar`, and ReLU: preserve nonnegative inputs and return zero
 for negative inputs. Call `relu z` for zero bias, or `relu z bias` to add a bias
 before rectifying; `relu z (bias := bias)` is the equivalent named form.
+`relu_eq_max` proves that `relu z = max z 0` over any linearly ordered scalar
+type; the proofs about ReLU networks use this form.
 
 `neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
 constant offset represented by the orange edges in the network diagram.
@@ -207,6 +212,16 @@ linear combination of exponential ridges (Stone–Weierstrass), and approximate
 each ridge by the one-input theorem.
 
 `neural-networks/ShallowNetwork/UniversalApproximation.lean` imports both theorems.
+
+`neural-networks/ShallowNetwork/LinearRegions/` bounds the number of affine pieces.
+`OneInput.lean` defines the proposition `LinearRegionBound`: for every width `D`
+and parameters, some set `S` of at most `D` joints exists such that the network
+is affine on every closed interval whose interior contains no joint. The points
+of `S` split the real line into at most `D + 1` linear regions.
+`linearRegionBound` proves it: the joints are `-θ_d0 / θ_d1` for units with
+nonzero input weight, each unit is affine on an interval with no joint inside
+(its preactivation keeps one sign there), and a weighted sum of affine functions
+is affine.
 
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.

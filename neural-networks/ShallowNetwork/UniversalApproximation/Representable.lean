@@ -25,14 +25,6 @@ that a one-input network applied to `∑ i, w i * x i` is a multi-input network.
 
 namespace NeuralNetworks
 
-/-- ReLU with its default zero bias is `max z 0`. -/
-theorem relu_eq_max (z : ℝ) : relu z = max z 0 := by
-  show (if 0 ≤ 0 + z then 0 + z else 0) = max z 0
-  rw [zero_add]
-  split_ifs with h
-  · exact (max_eq_left h).symm
-  · exact (max_eq_right (not_le.mp h).le).symm
-
 /-- `f` is computed exactly, at every input, by some shallow ReLU network. -/
 def ReLURepresentable (f : ℝ → ℝ) : Prop :=
   ∃ (D : ℕ) (Φ : ShallowNetworkParameters ℝ D), ∀ x, shallowNetwork relu x Φ = f x

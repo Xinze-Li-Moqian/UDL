@@ -1,6 +1,7 @@
 module
 
 public import Bias
+public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 
 /-!
 # Activation functions
@@ -38,5 +39,14 @@ example : relu (3 : Int) (-1) = 2 := rfl
 
 -- Pass the same bias by name.
 example : relu (3 : Int) (bias := -1) = 2 := rfl
+
+/-- ReLU with its default zero bias is `max z 0`. -/
+theorem relu_eq_max {Scalar : Type} [LinearOrder Scalar] [AddZeroClass Scalar]
+    (z : Scalar) : relu z = max z 0 := by
+  show (if 0 ≤ 0 + z then 0 + z else 0) = max z 0
+  rw [zero_add]
+  split_ifs with h
+  · exact (max_eq_left h).symm
+  · exact (max_eq_right (not_le.mp h).le).symm
 
 end NeuralNetworks
