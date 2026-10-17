@@ -202,6 +202,9 @@ open scoped ProbabilityTheory ProbabilityModels NNReal
 | `eVar[X; P]` | Extended variance, allowing infinity | Mathlib |
 | `SD[X; P]` | Standard deviation | This project |
 | `𝒩(m, v)` | Gaussian measure with mean `m` and variance `v` | This project |
+| `Pr[· \| θ; family]` | The entire distribution `family θ`, with parameters `θ` | This project |
+| `Pr[· \| x; model, φ]` | The prediction `model φ x` at input `x` with model parameters `φ` | This project |
+| `Pr[y \| θ; p]` | The chosen probability mass or density `p θ y` at output `y` | This project |
 | `P[A \| B]` | Probability of event `A` conditioned on event `B` | Mathlib |
 | `𝔼[X \| m; P]` | Conditional expectation given a sub-sigma-algebra `m` | This project |
 | `X ⟂ᵢ[P] Y` | Independence of two random variables under `P` | Mathlib |

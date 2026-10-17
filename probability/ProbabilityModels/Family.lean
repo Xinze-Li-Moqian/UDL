@@ -31,6 +31,18 @@ open MeasureTheory
 abbrev Family (Θ Y : Type*) [MeasurableSpace Y] :=
   Θ → ProbabilityMeasure Y
 
+/-- The distribution `family θ`, with `·` marking the output placeholder.
+This denotes the entire `ProbabilityMeasure`, not a density or event probability;
+`| θ` specifies the family parameter. Available with `open scoped ProbabilityModels`. -/
+scoped notation "Pr[" "·" " | " θ "; " family "]" =>
+  (family θ : MeasureTheory.ProbabilityMeasure _)
+
+/-- The predictive distribution `model φ x` at input `x` with model parameters `φ`.
+The model includes the chosen family and the conversion to distribution parameters.
+Available with `open scoped ProbabilityModels`. -/
+scoped notation "Pr[" "·" " | " x "; " model ", " φ "]" =>
+  (model φ x : MeasureTheory.ProbabilityMeasure _)
+
 /-- The output distribution at input `x`, when `f x φ` predicts its parameters.
 
 `Θ` contains distribution parameters, while `Parameters` contains model
@@ -41,5 +53,12 @@ def Family.predictiveDistribution {Θ Y X Parameters : Type*} [MeasurableSpace Y
     (family : Family Θ Y) (f : X → Parameters → Θ) (x : X) (φ : Parameters) :
     ProbabilityMeasure Y :=
   family (f x φ)
+
+/-- For this model, the predicted output distribution depends on `x` through
+`θ = f x φ`. The equality follows from the construction of the model. -/
+@[simp] theorem Family.predictiveDistribution_eq {Θ Y X Parameters : Type*}
+    [MeasurableSpace Y] (family : Family Θ Y) (f : X → Parameters → Θ)
+    (x : X) (φ : Parameters) :
+    family.predictiveDistribution f x φ = Pr[· | f x φ; family] := rfl
 
 end ProbabilityModels

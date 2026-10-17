@@ -8,12 +8,17 @@ require mathlib from git
 
 lean_lib Optimization where
   srcDir := "optimization"
-  roots := #[`Argmin, `GradientDescent]
+  roots := #[`Argmin, `Argmax, `GradientDescent]
 
 @[default_target]
 lean_lib ProbabilityModels where
   srcDir := "probability"
   roots := #[`ProbabilityModels]
+
+@[default_target]
+lean_lib LossFunctions where
+  srcDir := "loss-functions"
+  roots := #[`LossFunctions]
 
 @[default_target]
 lean_lib SupervisedLearning where

@@ -124,4 +124,11 @@ theorem integral_predictiveDensity_eq_one {Input Parameters : Type*} (p : family
 
 end Family.Density
 
+/-- The chosen density at output `y` with distribution parameters `θ`.
+Here `p : family.Density ν` fixes the reference measure: counting measure
+gives probability masses, while Lebesgue measure gives continuous densities.
+Use `Pr[· | θ; family]` for the entire distribution. -/
+scoped notation "Pr[" y " | " θ "; " p "]" =>
+  (Family.Density.toFun p θ y)
+
 end ProbabilityModels

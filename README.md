@@ -462,5 +462,10 @@ and connect predictive density values to the predictive distribution.
 `Independence.lean` factors event probabilities, joint laws, and expectations of
 products. It also proves additivity of variance under pairwise independence;
 `Examples/Independence.lean` derives the sample-mean variance `v / n`.
-The `loss-functions/` directory is reserved for likelihoods and training objectives.
+`loss-functions/` covers Section 5.1.1 with `networkPredictiveDistribution`:
+the existing network computes distribution parameters, then a chosen family
+supplies the predicted output distribution.
+Section 5.1.2 defines the product likelihood and the maximum-likelihood
+optimality condition, using the chosen densities from `ProbabilityModels`.
+See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.
