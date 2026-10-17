@@ -311,8 +311,9 @@ in the nested form of equation (4.16): `single β Ω` has no hidden layers, and
 `cons β₀ Ω₀ rest` puts a hidden layer in front of `rest`; `network_single` and
 `network_cons` evaluate them. `Network/Verification.lean` checks that `ofList`
 has the expected depth and capacity. Shallow networks, with one or several inputs,
-are the foundation's networks with one hidden layer (see Chapter 3); the composed
-networks will be rebuilt on it next.
+are the foundation's networks with one hidden layer (see Chapter 3), and composed
+networks apply those shallow networks in order, so every network in the
+repository is evaluated on this foundation.
 
 Composed networks (Section 4.1) and deep networks (Sections 4.3–4.4) are separate
 concepts with separate folders. Section 4.2, which shows that composed networks

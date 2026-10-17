@@ -12,9 +12,10 @@ becomes the input of the second, which returns `y'`. More generally, a list of
 shallow networks can be applied in order, each output feeding the next network.
 
 Each list entry pairs a hidden width `D` with parameters of that width, so the
-composed networks may have different widths. The list length is the number of
-composed networks; the empty list returns its input unchanged. The book's case
-of two width-three networks is in `ComposedNetwork.WidthThree`.
+composed networks may have different widths. Each one is a `shallowNetwork`,
+evaluated on the matrix-notation foundation in `Network`. The list length is the
+number of composed networks; the empty list returns its input unchanged. The
+book's case of two width-three networks is in `ComposedNetwork.WidthThree`.
 -/
 
 @[expose] public section
