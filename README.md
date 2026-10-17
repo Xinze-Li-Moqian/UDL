@@ -293,6 +293,7 @@ neural-networks/
 ├── DeepNetwork.lean             # Entry point for Sections 4.2–4.4
 └── DeepNetwork/
     ├── FromComposition.lean     # Section 4.2: composed networks are deep networks
+    ├── UniversalApproximation.lean # Section 4.5.1: deep networks approximate too
     ├── WidthThree.lean          # Two layers of three units, named parameters
     └── Verification.lean        # Definition checks
 ```
@@ -353,6 +354,19 @@ networks of widths `[D₁, …, D_K]` lie in the deep family with those hidden w
 The merged weight matrices are outer products `θ' φᵀ`, while a general deep
 network may use any matrix; the book notes that deep networks therefore describe
 a broader family, which is not proved here.
+
+`DeepNetwork/UniversalApproximation.lean` follows Section 4.5.1. For ReLU the
+identity is exact, `y = ReLU(y) - ReLU(-y)` (`relu_sub_relu_neg`), so
+`MultiInput.Parameters.deepen Φ K` turns a shallow network of width `D` into a deep
+network with hidden widths `D :: [2, …, 2]`: after the shallow hidden layer, one
+layer computes `(ReLU(y), ReLU(-y))` from the shallow output `y`, further layers
+keep the pair `(u, v)` with `u - v = y`, and the output layer returns `u - v`.
+`network_deepen` shows that the result computes the shallow network's output.
+`DeepUniversalApproximation` states that for every depth `K ≥ 1`, deep ReLU
+networks with suitable hidden widths approximate any continuous function on a
+compact set `C ⊆ ℝ^Dᵢ`, and `deepUniversalApproximation` proves it from the
+multi-input theorem of Chapter 3. The compact set is called `C` because the book
+uses `K` for the depth.
 `DeepNetwork/WidthThree.lean` gives the two-layer network of Section 4.3 with the
 book's named parameters, equations (4.7)–(4.9): six `θ` for the first layer,
 twelve `ψ` for the second, and four `φ'` for the output.
