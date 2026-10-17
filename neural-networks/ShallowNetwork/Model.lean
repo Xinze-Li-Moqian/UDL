@@ -40,6 +40,14 @@ structure ShallowNetworkParameters (Scalar : Type) (D : ℕ) where
   /-- The input coefficients `θ_d1`. -/
   hiddenWeights : Fin D → Scalar
 
+/-- Network capacity measured by hidden width, as in Section 3.2.
+This counts all `D` hidden units, regardless of their parameter values or outputs.
+It measures the network architecture, not a norm of its parameters or output
+function; different widths can represent the same function. -/
+def networkCapacity {Scalar : Type} {D : ℕ}
+    (_ : ShallowNetworkParameters Scalar D) : ℕ :=
+  D
+
 /-- Equations (3.5)–(3.6), evaluated with a chosen activation function. -/
 def shallowNetwork {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
     {D : ℕ} (activation : ActivationFunction Scalar)

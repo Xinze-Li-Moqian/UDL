@@ -122,6 +122,11 @@ collections indexed by `Fin D`: output weights, hidden biases, and hidden weight
 `shallowNetwork activation x Φ` sums the weighted hidden activations and adds the
 output bias. Lean numbers the units from `0` to `D - 1`.
 
+`networkCapacity Φ` returns the number of hidden units `D`, the width-based
+capacity measure used in Section 3.2. It depends on the network architecture,
+not the parameter values, and is not a norm. Both examples report capacity `3`,
+even though the chosen weights in the example without biases yield zero output.
+
 `neural-networks/ShallowNetwork/WidthThree.lean` imports `ShallowNetwork.Model`
 and places the book's three-unit case in the `NeuralNetworks.WidthThree`
 namespace. `WidthThree.Parameters` retains its ten named parameters;

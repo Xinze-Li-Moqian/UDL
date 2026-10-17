@@ -36,6 +36,7 @@ def inputs : List ℚ := [-1, 0, 1 / 2, 1, 3 / 2, 2, 3]
 #eval do
   let Φ := parameters
   IO.println "Without bias: h1 = h2 = h3 = ReLU(x)"
+  IO.println s!"Network capacity (hidden units): {networkCapacity Φ}"
   IO.println "y = h1 - 2*h2 + h3 (exact rational arithmetic)"
   for x in inputs do
     let h₁ := relu (Φ.hiddenWeights 0 * x)
