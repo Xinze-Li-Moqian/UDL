@@ -98,11 +98,17 @@ neural-networks/
 ├── ShallowNetwork/
 │   ├── Model.lean               # Shallow network definitions
 │   ├── WidthThree.lean          # The book's three-unit case
-│   ├── Verification.lean        # Proofs
-│   ├── UniversalApproximation.lean  # Statement and proof of the theorem
-│   └── UniversalApproximation/      # Supporting lemmas
+│   ├── MultiInput.lean          # Networks with several inputs
+│   ├── Verification.lean        # Entry point for definition checks
+│   ├── Verification/
+│   │   ├── Model.lean           # One-input model at zero width
+│   │   ├── WidthThree.lean      # The book's width-three formula
+│   │   └── MultiInput.lean      # Multi-input model checks
+│   ├── UniversalApproximation.lean  # Entry point for the theorem
+│   └── UniversalApproximation/
 │       ├── Representable.lean   # Functions computed by ReLU networks
-│       └── Interpolation.lean   # Ramps and piecewise-linear interpolation
+│       ├── Interpolation.lean   # Ramps and piecewise-linear interpolation
+│       └── OneInput.lean        # The theorem for one input
 └── Example/
     ├── Plot.lean                # Shared sampling and plotting helpers
     ├── WithBias.lean            # Numerical example and plots
@@ -139,27 +145,43 @@ namespace. `WidthThree.Parameters` retains its ten named parameters;
 `WidthThree.network` reuse `shallowNetwork`, giving equation (3.4),
 `φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`.
 
-`neural-networks/ShallowNetwork/Verification.lean` proves that zero width leaves
-only the output bias (`shallowNetwork_zero_width`). Its three-unit results,
-`WidthThree.networkWithParameters_eq` and `WidthThree.network_eq`, verify that
-the wrappers use the same model and expand to the book's formula.
+`neural-networks/ShallowNetwork/MultiInput.lean` generalizes the model to `Dᵢ`
+inputs (Sections 3.3–3.4), still with one output. The input is a vector
+`x : Fin Dᵢ → Scalar`, and each hidden unit has a bias and a weight vector:
+`h_d = a[θ_d0 + ∑ i, θ_di * x_i]`. The namespace `NeuralNetworks.MultiInput`
+contains `hiddenUnit`, `Parameters Scalar Dᵢ D`, and `network`.
+`ShallowNetworkParameters.toMultiInput` views one-input parameters as the case
+`Dᵢ = 1`.
+
+`neural-networks/ShallowNetwork/Verification/` checks that the definitions mean
+what they claim. These are consistency checks, not new mathematical results:
+
+- `Model.lean`: zero width leaves only the output bias (`shallowNetwork_zero_width`).
+- `WidthThree.lean`: `WidthThree.networkWithParameters_eq` and
+  `WidthThree.network_eq` verify that the wrappers use the same model and expand
+  to the book's formula.
+- `MultiInput.lean`: `MultiInput.network_zero_width` is the multi-input
+  zero-width result, and `shallowNetwork_eq_multiInput` proves that the
+  one-input model equals the multi-input model with `Dᵢ = 1`.
+
+`neural-networks/ShallowNetwork/Verification.lean` imports all three.
 Definitions depend only on earlier layers:
-`WidthThree` imports `Model`, which imports `ActivationFunction`, which imports
+`WidthThree` and `MultiInput` import `Model`, which imports `ActivationFunction`, which imports
 `Bias`. Proofs build on those definitions; examples and plots build on the library.
 `neural-networks/ShallowNetwork.lean` is the entry point importing `Model`,
-`WidthThree`, `Verification`, and `UniversalApproximation`. Demonstrations remain
+`WidthThree`, `MultiInput`, `Verification`, and `UniversalApproximation`. Demonstrations remain
 separate imports.
 
-`neural-networks/ShallowNetwork/UniversalApproximation.lean` states and proves
-the universal approximation theorem. The proposition `UniversalApproximation`
-says: for every continuous function on a compact subset of the real line and
-every positive error tolerance, some width and parameters give a ReLU network
-whose error is below that tolerance throughout the set. The width and parameters
-are chosen before the input point. `universalApproximation` proves it: extend
-the target continuously to the whole line (Tietze), enclose the set in an
-interval where the extension is uniformly continuous, and interpolate it
-linearly on a fine grid. The folder `UniversalApproximation/` holds the
-supporting lemmas, each building on the previous one:
+`neural-networks/ShallowNetwork/UniversalApproximation/` holds the universal
+approximation theorem and its supporting lemmas. `OneInput.lean` states and
+proves it for one input. The proposition `UniversalApproximation` says: for every
+continuous function on a compact subset of the real line and every positive
+error tolerance, some width and parameters give a ReLU network whose error is
+below that tolerance throughout the set. The width and parameters are chosen
+before the input point. `universalApproximation` proves it: extend the target
+continuously to the whole line (Tietze), enclose the set in an interval where
+the extension is uniformly continuous, and interpolate it linearly on a fine
+grid. The supporting lemmas build that argument in layers:
 
 - `Representable.lean`: `ReLURepresentable f` means some shallow ReLU network
   computes `f` exactly; such functions are closed under constants, sums, and
@@ -167,6 +189,10 @@ supporting lemmas, each building on the previous one:
 - `Interpolation.lean`: a ramp from `0` to `1` made of two ReLU units, so `N`
   grid cells give a network of width `2 * N`; the interpolant's value on one grid
   cell; and the error bound for a convex combination.
+
+`neural-networks/ShallowNetwork/UniversalApproximation.lean` imports the theorem.
+The multi-input version, approximating surfaces and higher-dimensional graphs,
+is not yet formalized.
 
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
