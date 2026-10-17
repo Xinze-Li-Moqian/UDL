@@ -1,13 +1,19 @@
 # UDL — Deep Learning
 
-A repository for learning deep learning, with *Understanding Deep Learning* by
+A repository for learning deep learning, with
+[*Understanding Deep Learning*](https://udlbook.github.io/udlbook/) by
 Simon J. D. Prince as the main reference.
+
+The book is freely available as a PDF from its official website under a
+[Creative Commons Attribution–NonCommercial–NoDerivatives (CC BY-NC-ND) license](https://github.com/udlbook/udlbook/blob/main/LICENSE).
+The [companion repository](https://github.com/udlbook/udlbook) contains notebooks,
+slides, and other learning materials.
 
 The repository brings together theory notes, implementations, and experiments.
 Lean 4 is used to express mathematical definitions and verify selected results.
 
 Current topics include supervised learning, linear regression, loss functions,
-gradient descent, and discriminative versus generative models.
+gradient descent, discriminative versus generative models, and activation functions.
 
 Ideas and exercises from the book are integrated into modules by topic, with
 source references in the code.
@@ -78,3 +84,19 @@ predictions. Arithmetic is rational; training results are displayed as rounded
 decimals. Each model's loss measures a different output quantity, so compare it
 to its own initial loss. Run `lake env lean supervised-learning/Examples.lean`
 to see the three exact values `7`, `7`, and `1`, followed by the training results.
+
+## Chapter 3: Shallow Neural Networks
+
+This topic is being developed one definition at a time, starting with Section 3.1.
+`neural-networks/ActivationFunction.lean` defines the type of a scalar activation
+function, `Scalar → Scalar`, and ReLU: preserve nonnegative inputs and return zero
+for negative inputs. It also defines a hidden unit, `activation (bias + weight * x)`.
+Run `lake build` to check these modules along with the existing supervised-learning
+modules.
+
+For a visual example, open `neural-networks/ActivationPlot.lean` in VS Code with
+the Lean extension and place the cursor on `#html activationPlots`. The Lean
+Infoview shows `ReLU(x)` and `ReLU(x - 1)` using ProofWidgets. Both plots evaluate
+the existing definitions with `Float` samples and connect the samples with
+straight segments. Change the bias and weight in the `hiddenUnit` call to explore
+how the graph changes.

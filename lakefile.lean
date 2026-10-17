@@ -17,3 +17,8 @@ lean_lib SupervisedLearning where
     `Discriminative.LinearRegression, `Discriminative.LinearRegressionTraining,
     `Generative.Model, `Generative.LinearRegression, `Generative.LinearRegressionTraining,
     `Examples, `Verification]
+
+@[default_target]
+lean_lib NeuralNetworks where
+  srcDir := "neural-networks"
+  roots := #[`ActivationFunction, `ActivationPlot]
