@@ -23,7 +23,7 @@ variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar] [OfNat Scalar 2]
 
 /-- The real-valued least-squares gradient formula:
 `∂L/∂φ₀ = 2 Σᵢ rᵢ` and `∂L/∂φ₁ = 2 Σᵢ rᵢ xᵢ`, where `rᵢ = f[xᵢ, φ] - yᵢ`.
-For `Scalar = ℝ`, `Verification.lean` proves that these coordinates are the
+For `Scalar = ℝ`, `Verification/GradientFormula.lean` proves that these coordinates are the
 corresponding partial derivatives of `leastSquaresLoss`. -/
 def leastSquaresGradient (data : TrainingDataset Scalar 1 1 I)
     (φ : Parameters Scalar) : Parameters Scalar :=

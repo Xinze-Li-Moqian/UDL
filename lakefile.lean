@@ -14,4 +14,4 @@ lean_lib Optimization where
 lean_lib SupervisedLearning where
   srcDir := "supervised-learning"
   roots := #[`SupervisedLearning, `LinearRegression, `LinearRegressionTraining,
-    `Verification]
+    `Verification, `Problems]
