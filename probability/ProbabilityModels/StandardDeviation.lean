@@ -21,16 +21,16 @@ open MeasureTheory ProbabilityTheory
 
 /-- The square root of the real-valued variance. For finite-variance semantics
 under a probability measure, use this with `MemLp X 2 μ`. -/
-noncomputable def standardDeviation {Ω : Type*} [MeasurableSpace Ω]
+noncomputable def standardDeviation {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (X : Ω → ℝ) (μ : Measure Ω) : ℝ :=
   Real.sqrt (variance X μ)
 
-theorem standardDeviation_nonneg {Ω : Type*} [MeasurableSpace Ω]
+theorem standardDeviation_nonneg {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (X : Ω → ℝ) (μ : Measure Ω) : 0 ≤ standardDeviation X μ :=
   Real.sqrt_nonneg _
 
 /-- Squaring the standard deviation recovers the real-valued variance. -/
-@[simp] theorem standardDeviation_sq {Ω : Type*} [MeasurableSpace Ω]
+@[simp] theorem standardDeviation_sq {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (X : Ω → ℝ) (μ : Measure Ω) : standardDeviation X μ ^ 2 = variance X μ :=
   Real.sq_sqrt (variance_nonneg X μ)
 

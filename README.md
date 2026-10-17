@@ -432,6 +432,15 @@ conditional expectation, densities, and independence. These expose Mathlib's
 existing theory; local additions define standard deviation and adapt the
 Gaussian law to `Family`.
 
+`Expectation.lean` states the constant, linearity, affine-transformation, and
+order rules with their probability and integrability assumptions, using
+Mathlib's integral proofs. `Examples/Expectation.lean` illustrates discrete
+weighted means and Gaussian means.
+
+`ProbabilityModels.Notation` collects the notation used by these topics. Open
+the `ProbabilityTheory` and `ProbabilityModels` scopes to write `𝔼[X; P]`,
+`Var[X; P]`, `SD[X; P]`, and `𝒩(m, v)` with an explicit underlying measure.
+
 The `Family` interface is pointwise. Its connections to measurable kernels and
 specified densities for likelihoods remain to be developed. The
 `loss-functions/` directory is reserved for likelihoods and training objectives.

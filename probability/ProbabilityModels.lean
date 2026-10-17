@@ -10,6 +10,8 @@ public import ProbabilityModels.ConditionalDistribution
 public import ProbabilityModels.ConditionalExpectation
 public import ProbabilityModels.Density
 public import ProbabilityModels.Independence
+public import ProbabilityModels.Notation
+public import ProbabilityModels.Examples.Expectation
 
 /-!
 # Probability models
@@ -23,4 +25,7 @@ real Gaussian measures to that interface.
 
 Each topic can also be imported individually, for example
 `ProbabilityModels.Expectation` or `ProbabilityModels.Gaussian`.
+`ProbabilityModels.Notation` provides a shared notation entry point, with
+explicit measures for expectation and standard deviation.
+`ProbabilityModels.Examples.Expectation` demonstrates discrete and Gaussian means.
 -/
