@@ -290,10 +290,17 @@ neural-networks/
 │   ├── Model.lean               # Shallow networks composed in order
 │   ├── WidthThree.lean          # The book's two width-three networks
 │   └── Verification.lean        # Definition checks
-├── DeepNetwork.lean             # Entry point for Sections 4.2–4.4
+├── DeepNetwork.lean             # Entry point for Sections 4.2–4.5
 └── DeepNetwork/
     ├── FromComposition.lean     # Section 4.2: composed networks are deep networks
     ├── UniversalApproximation.lean # Section 4.5.1: deep networks approximate too
+    ├── LinearRegions.lean       # Section 4.5.2: upper bound and attainability
+    ├── LinearRegions/
+    │   ├── Pieces.lean          # Affine partitions and exact region counts
+    │   ├── UpperBound.lean      # Arbitrary hidden widths: product bound
+    │   ├── Branches.lean        # Disjoint inverse branches give a lower bound
+    │   ├── Sawtooth.lean        # Explicit width-D folding network
+    │   └── Attainability.lean   # Equal-width networks attain the bound
     ├── WidthThree.lean          # Two layers of three units, named parameters
     └── Verification.lean        # Definition checks
 ```
@@ -303,8 +310,10 @@ networks. Vectors (`Fin D → Scalar`), matrices (`Matrix`), matrix-vector produ
 (`Ω *ᵥ h`), and vector addition come from Mathlib; the folder defines only the
 book's network terms. `Architecture` holds the hyperparameters: the depth `K` and
 the layer sizes `D₀ = Dᵢ, D₁, …, D_K, D_{K+1} = Dₒ`, numbered as in the book,
-with `capacity` the total number of hidden units; `Architecture.ofList Dᵢ widths Dₒ`
-builds one from its hidden widths. `NetworkParameters Scalar A` holds
+with `capacity` the total number of hidden units and `parameterCount` the total
+number of scalar bias and weight entries, `∑ k, D_{k+1} * (D_k + 1)`;
+`Architecture.ofList Dᵢ widths Dₒ` builds one from its hidden widths.
+`NetworkParameters Scalar A` holds
 `φ = {β_k, Ω_k}`, where `β_k` has size `D_{k+1}` and `Ω_k` is `D_{k+1} × D_k`.
 `hidden a Φ x k` is the hidden layer `h_k = a ∘ (β_{k-1} + Ω_{k-1} h_{k-1})`
 (with `h₀ = x`) and `network a Φ x` is the output `y = β_K + Ω_K h_K`, the general
@@ -312,7 +321,14 @@ deep network of equation (4.15). Parameters can also be built layer by layer, as
 in the nested form of equation (4.16): `single β Ω` has no hidden layers, and
 `cons β₀ Ω₀ rest` puts a hidden layer in front of `rest`; `network_single` and
 `network_cons` evaluate them. `Network/Verification.lean` checks that `ofList`
-has the expected depth and capacity. Shallow networks, with one or several inputs,
+has the expected depth and capacity. For Section 4.5.2, `parameterCount_shallow`
+proves that `ofList 1 [D] 1` has `3 * D + 1` parameters, and
+`parameterCount_deep` proves that `ofList 1 (List.replicate K D) 1` has
+`3 * D + 1 + (K - 1) * D * (D + 1)` parameters when `K ≥ 1`. Both formulas hold
+for every width `D`. The count describes the fully connected model, in which all
+bias and weight entries are unrestricted; it does not count the free parameters
+of a constrained representation such as the outer-product matrices arising from
+composition. Shallow networks, with one or several inputs,
 are the foundation's networks with one hidden layer (see Chapter 3), and composed
 networks apply those shallow networks in order, so every network in the
 repository is evaluated on this foundation.
@@ -367,6 +383,30 @@ networks with suitable hidden widths approximate any continuous function on a
 compact set `C ⊆ ℝ^Dᵢ`, and `deepUniversalApproximation` proves it from the
 multi-input theorem of Chapter 3. The compact set is called `C` because the book
 uses `K` for the depth.
+
+`DeepNetwork/LinearRegions.lean` follows Section 4.5.2 for one-input, one-output
+ReLU networks. `deepLinearRegionBound` proves that arbitrary hidden widths
+`[D₁, …, D_K]` admit a finite joint set `S` with
+`S.card + 1 ≤ ∏ k, (D_k + 1)`, such that the output is affine on every closed
+interval with no joint in its interior (`AffinePieces`). The proof tracks a
+common partition of all coordinates through each layer: each ReLU adds at most
+one candidate joint per old cell. `deepLinearRegionBound_uniform` specializes
+the bound to `(D + 1)^K`. No positivity assumption on the widths or depth is
+needed for these upper bounds.
+
+`deepLinearRegionBound_attained` proves that for every `D ≥ 3` and every depth
+`K`, some network of architecture `ofList 1 (List.replicate K D) 1` has exactly
+`(D + 1)^K` affine regions. `HasExactlyRegions f N` requires both a partition
+into `N` pieces and a proof that every affine partition has at least `N` pieces,
+so redundant subdivision does not count. The witness composes explicit
+sawtooth networks, each with `D + 1` full branches inside `[0,1]`, then uses
+Section 4.2 to turn that composition into the requested deep network. Continuous
+inverse branches multiply under composition; `FullBranches.card_le` proves
+their number is a lower bound on every affine partition of the final scalar
+output. Depth zero is included, with the identity as witness. The construction
+follows the folding argument of
+[Serra, Tjandraatmadja, and Ramalingam (2018), Theorem 7 and Appendix D](https://arxiv.org/html/1711.02114v4#A4).
+
 `DeepNetwork/WidthThree.lean` gives the two-layer network of Section 4.3 with the
 book's named parameters, equations (4.7)–(4.9): six `θ` for the first layer,
 twelve `ψ` for the second, and four `φ'` for the output.

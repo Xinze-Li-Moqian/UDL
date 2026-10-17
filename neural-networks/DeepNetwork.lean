@@ -3,6 +3,7 @@ module
 public import Network
 public import DeepNetwork.FromComposition
 public import DeepNetwork.UniversalApproximation
+public import DeepNetwork.LinearRegions
 public import DeepNetwork.WidthThree
 public import DeepNetwork.Verification
 
@@ -19,6 +20,8 @@ from composed networks.
   deep network with those hidden widths (Section 4.2, equations 4.5–4.6).
 - `UniversalApproximation`: for every depth `K ≥ 1`, deep ReLU networks are
   universal approximators (Section 4.5.1).
+- `LinearRegions`: one-input ReLU networks have at most `∏ k, (D_k+1)` affine
+  regions; equal-width networks attain `(D+1)^K` when `D ≥ 3` (Section 4.5.2).
 - `WidthThree`: the book's network with two hidden layers of three units and
   named parameters, equations (4.7)–(4.9).
 - `Verification`: the width-three network expands to equation (4.10).

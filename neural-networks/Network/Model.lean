@@ -29,6 +29,9 @@ the output size. Hidden layers keep the book's numbering from `1` to `K`, so
 `A.size k` is `D_k`. `Architecture.ofList Dᵢ [D₁, …, D_K] Dₒ` builds an
 architecture from its hidden widths.
 
+`Architecture.parameterCount` counts all scalar entries in the bias vectors and
+weight matrices of a fully connected network: `∑ k, D_{k+1} * (D_k + 1)`.
+
 `NetworkParameters Scalar A` holds the parameters `φ = {β_k, Ω_k}` for
 `k = 0, …, K`: `β_k` has size `D_{k+1}` and `Ω_k` is `D_{k+1} × D_k`, so the sizes
 of consecutive layers always match. `hidden a Φ x k` is the hidden layer `h_k`,
@@ -68,6 +71,11 @@ def outputs (A : Architecture) : ℕ := A.size (Fin.last _)
 
 /-- The capacity: the total number of hidden units `D₁ + ⋯ + D_K`. -/
 def capacity (A : Architecture) : ℕ := ∑ k : Fin A.depth, A.size k.succ.castSucc
+
+/-- The number of scalar parameters: `β_k` has `D_{k+1}` entries and `Ω_k` has
+`D_{k+1} * D_k` entries. All entries are unrestricted in the fully connected model. -/
+def parameterCount (A : Architecture) : ℕ :=
+  ∑ k : Fin (A.depth + 1), A.size k.succ * (A.size k.castSucc + 1)
 
 /-- The architecture with input size `Dᵢ`, hidden widths `[D₁, …, D_K]`, and output
 size `Dₒ`. -/
