@@ -1,14 +1,16 @@
-# UDL — Understanding Deep Learning
+# UDL — Deep Learning
 
-A learning repository for Understanding Deep Learning by Simon J. D. Prince,
-using Lean 4 to connect mathematical definitions, algorithms, proofs, and runnable
-experiments.
+A repository for learning deep learning, with *Understanding Deep Learning* by
+Simon J. D. Prince as the main reference.
 
-The current focus is Chapter 2: supervised learning, linear regression, loss
-functions, gradient descent, and discriminative versus generative models.
+The repository brings together theory notes, implementations, and experiments.
+Lean 4 is used to express mathematical definitions and verify selected results.
 
-Book exercises contribute directly to the corresponding theory and implementation
-modules, with their source noted in the code.
+Current topics include supervised learning, linear regression, loss functions,
+gradient descent, and discriminative versus generative models.
+
+Ideas and exercises from the book are integrated into modules by topic, with
+source references in the code.
 
 ## Working Approach
 
