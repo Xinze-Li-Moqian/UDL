@@ -416,3 +416,23 @@ twelve `ψ` for the second, and four `φ'` for the output.
 evaluates the network at a scalar input. `DeepNetwork/Verification.lean` checks
 that the width-three network expands to the single expression of equation (4.10)
 (`WidthThree.deepNetwork_eq`).
+
+## Chapter 5: Loss Functions
+
+`probability/` holds reusable probability interfaces built on Mathlib, separately
+from network architectures and training objectives. Its library entry point is
+`ProbabilityModels`. Section 5.1.1 starts with `ProbabilityModels.Family Θ Y`, a
+family of probability measures indexed by distribution parameters `θ : Θ`.
+`Family.predictiveDistribution` composes this family with a predictor `f x φ`,
+so each input and model parameter choice yields a normalized output distribution.
+
+The foundation has separate files for expectation, variance, standard deviation,
+Gaussian distributions, conditional probability, conditional distributions,
+conditional expectation, densities, and independence. These expose Mathlib's
+existing theory; local additions define standard deviation and adapt the
+Gaussian law to `Family`.
+
+The `Family` interface is pointwise. Its connections to measurable kernels and
+specified densities for likelihoods remain to be developed. The
+`loss-functions/` directory is reserved for likelihoods and training objectives.
+See [probability/README.md](probability/README.md) for the file map and current scope.

@@ -11,6 +11,11 @@ lean_lib Optimization where
   roots := #[`Argmin, `GradientDescent]
 
 @[default_target]
+lean_lib ProbabilityModels where
+  srcDir := "probability"
+  roots := #[`ProbabilityModels]
+
+@[default_target]
 lean_lib SupervisedLearning where
   srcDir := "supervised-learning"
   roots := #[`SupervisedLearning, `Discriminative.Model,
