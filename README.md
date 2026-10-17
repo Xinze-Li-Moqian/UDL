@@ -108,7 +108,9 @@ neural-networks/
 │   └── UniversalApproximation/
 │       ├── Representable.lean   # Functions computed by ReLU networks
 │       ├── Interpolation.lean   # Ramps and piecewise-linear interpolation
-│       └── OneInput.lean        # The theorem for one input
+│       ├── Ridge.lean           # Ridge functions and the exponential ridge algebra
+│       ├── OneInput.lean        # The theorem for one input
+│       └── MultiInput.lean      # The theorem for several inputs
 └── Example/
     ├── Plot.lean                # Shared sampling and plotting helpers
     ├── WithBias.lean            # Numerical example and plots
@@ -185,14 +187,26 @@ grid. The supporting lemmas build that argument in layers:
 
 - `Representable.lean`: `ReLURepresentable f` means some shallow ReLU network
   computes `f` exactly; such functions are closed under constants, sums, and
-  scalar multiples.
+  scalar multiples. `MultiInput.ReLURepresentable` is the multi-input version,
+  and `comp_linear` shows that a one-input network applied to `∑ i, w i * x i`
+  is a multi-input network.
 - `Interpolation.lean`: a ramp from `0` to `1` made of two ReLU units, so `N`
   grid cells give a network of width `2 * N`; the interpolant's value on one grid
   cell; and the error bound for a convex combination.
+- `Ridge.lean`: a ridge function `φ (∑ i, w i * x i)` with continuous `φ` is
+  approximable, by the one-input theorem applied to `φ`. The exponential ridges
+  `exp (∑ i, w i * x i)` are closed under products, so the algebra they
+  generate is their linear span, and it separates points.
 
-`neural-networks/ShallowNetwork/UniversalApproximation.lean` imports the theorem.
-The multi-input version, approximating surfaces and higher-dimensional graphs,
-is not yet formalized.
+`MultiInput.lean` states and proves the theorem for `Dᵢ` inputs
+(`MultiInput.UniversalApproximation`, `MultiInput.universalApproximation`). With
+two inputs the target's graph is a surface. The one-input grid argument does not
+carry over, because every hidden unit is constant along hyperplanes and cannot
+form a localized bump. Instead, extend the target (Tietze), approximate it by a
+linear combination of exponential ridges (Stone–Weierstrass), and approximate
+each ridge by the one-input theorem.
+
+`neural-networks/ShallowNetwork/UniversalApproximation.lean` imports both theorems.
 
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
