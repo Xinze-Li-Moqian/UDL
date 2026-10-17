@@ -267,3 +267,49 @@ Both examples import `neural-networks/Example/Plot.lean` for shared sampling
 and ProofWidgets plotting functions. This helper imports `ShallowNetwork.Model`
 and is independent of the example parameters. Each example supplies its own
 parameters to the numerical evaluation and the charts.
+
+## Chapter 4: Deep Neural Networks
+
+```text
+neural-networks/
+├── ComposedNetwork.lean         # Entry point for Section 4.1
+├── ComposedNetwork/
+│   ├── Model.lean               # Shallow networks composed in order
+│   ├── WidthThree.lean          # The book's two width-three networks
+│   └── Verification.lean        # Definition checks
+├── DeepNetwork.lean             # Entry point for Sections 4.3–4.4
+└── DeepNetwork/
+    ├── Model.lean               # Deep networks in matrix notation
+    └── Verification.lean        # Definition checks
+```
+
+Composed networks (Section 4.1) and deep networks (Sections 4.3–4.4) are separate
+concepts with separate folders. Section 4.2, which shows that composed networks
+are a special case of deep networks, will connect them.
+
+`neural-networks/ComposedNetwork/Model.lean` follows Section 4.1: the output of
+one shallow network becomes the input of the next. `composedNetwork activation Ns x`
+takes a list `Ns` of shallow networks, each paired with its hidden width, and
+applies them in order; the empty list returns `x`. The networks may have
+different widths, and the list length is the number of composed networks.
+`ComposedNetwork/WidthThree.lean` gives the book's example, equations
+(4.1)–(4.4): `WidthThree.composedNetwork activation x Φ Φ'` feeds the output `y`
+of a width-three network with parameters `Φ` into a second width-three network
+with parameters `Φ'`, returning `y'`. Both reuse `WidthThree.Parameters` from
+Chapter 3. `ComposedNetwork/Verification.lean` checks that this example is the
+general composition applied to the list of the two networks
+(`WidthThree.composedNetwork_eq`).
+
+`neural-networks/DeepNetwork/Model.lean` defines deep networks in the general
+form of Section 4.4: `h₁ = a[β₀ + Ω₀ x]`, `h_k = a[β_{k-1} + Ω_{k-1} h_{k-1}]`,
+and `y = β_K + Ω_K h_K`, with `Dᵢ` inputs and `Dₒ` outputs. `LayerParameters`
+holds one layer's bias vector `β` and weight matrix `Ω`.
+`DeepNetworkParameters Scalar Dᵢ widths Dₒ` holds one layer per hidden width plus
+the output layer; the hidden widths are part of the type, so consecutive layers
+always have matching sizes. `deepNetwork activation Φ x` evaluates equation
+(4.16), applying the layers `h ↦ a[β + Ω h]` in turn and then the output layer.
+For example, `DeepNetworkParameters ℝ 1 [3, 3] 1` is the two-layer network of
+Section 4.3. `DeepNetwork/Verification.lean` checks that a deep network with one
+hidden layer is a shallow network: `MultiInput.Parameters.toDeep` converts a
+shallow network with `Dᵢ` inputs and width `D` into a deep network with hidden
+widths `[D]`, and `deepNetwork_toDeep` shows that both compute the same output.
