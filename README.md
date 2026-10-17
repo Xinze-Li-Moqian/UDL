@@ -98,7 +98,11 @@ neural-networks/
 ├── ShallowNetwork/
 │   ├── Model.lean               # Shallow network definitions
 │   ├── WidthThree.lean          # The book's three-unit case
-│   └── Verification.lean        # Proofs
+│   ├── Verification.lean        # Proofs
+│   ├── UniversalApproximation.lean  # Statement and proof of the theorem
+│   └── UniversalApproximation/      # Supporting lemmas
+│       ├── Representable.lean   # Functions computed by ReLU networks
+│       └── Interpolation.lean   # Ramps and piecewise-linear interpolation
 └── Example/
     ├── Plot.lean                # Shared sampling and plotting helpers
     ├── WithBias.lean            # Numerical example and plots
@@ -143,8 +147,27 @@ Definitions depend only on earlier layers:
 `WidthThree` imports `Model`, which imports `ActivationFunction`, which imports
 `Bias`. Proofs build on those definitions; examples and plots build on the library.
 `neural-networks/ShallowNetwork.lean` is the entry point importing `Model`,
-`WidthThree`, and `Verification`. Demonstrations remain separate imports.
-The universal approximation theorem itself is not yet formalized.
+`WidthThree`, `Verification`, and `UniversalApproximation`. Demonstrations remain
+separate imports.
+
+`neural-networks/ShallowNetwork/UniversalApproximation.lean` states and proves
+the universal approximation theorem. The proposition `UniversalApproximation`
+says: for every continuous function on a compact subset of the real line and
+every positive error tolerance, some width and parameters give a ReLU network
+whose error is below that tolerance throughout the set. The width and parameters
+are chosen before the input point. `universalApproximation` proves it: extend
+the target continuously to the whole line (Tietze), enclose the set in an
+interval where the extension is uniformly continuous, and interpolate it
+linearly on a fine grid. The folder `UniversalApproximation/` holds the
+supporting lemmas, each building on the previous one:
+
+- `Representable.lean`: `ReLURepresentable f` means some shallow ReLU network
+  computes `f` exactly; such functions are closed under constants, sums, and
+  scalar multiples.
+- `Interpolation.lean`: a ramp from `0` to `1` made of two ReLU units, so `N`
+  grid cells give a network of width `2 * N`; the interpolant's value on one grid
+  cell; and the error bound for a convex combination.
+
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
 

@@ -5,9 +5,10 @@ public import ShallowNetwork.WidthThree
 /-!
 # Shallow network verification
 
-The zero-width network returns its output bias. At width three, the network
-sum gives the book's explicit formula from Section 3.1.1, equation (3.4).
-The universal approximation theorem is not yet formalized.
+The zero-width network returns its output bias. At width three, the output
+is `φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`.
+The universal approximation theorem is proved in
+`ShallowNetwork.UniversalApproximation`.
 -/
 
 @[expose] public section
@@ -31,7 +32,8 @@ theorem networkWithParameters_eq {Scalar : Type} [AddCommMonoid Scalar]
       shallowNetwork activation x Φ.toShallowNetworkParameters :=
   rfl
 
-/-- Expanding the sum at width three gives the book's equation (3.4). -/
+/-- At width three, the output is `φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`,
+where each `hᵢ` is a hidden activation. -/
 theorem network_eq {Scalar : Type} [AddCommMonoid Scalar] [Mul Scalar]
     (activation : ActivationFunction Scalar)
     (φ₀ φ₁ φ₂ φ₃ : Scalar)

@@ -15,8 +15,9 @@ and the output is `φ₀ + ∑ d, φ_d * h_d`.
 `Fin D` indexes the units from `0` to `D - 1`; the book numbers them from `1`
 to `D`. There are `3 * D + 1` scalar parameters: three per hidden unit and one
 output bias. This module defines the network family used in the universal
-approximation theorem; it does not prove that theorem. Properties of the model
-are collected in `ShallowNetwork.Verification`.
+approximation theorem, which is stated and proved in
+`ShallowNetwork.UniversalApproximation`. Proved properties of the model are
+collected in `ShallowNetwork.Verification`.
 -/
 
 @[expose] public section
