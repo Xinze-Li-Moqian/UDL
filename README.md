@@ -113,7 +113,9 @@ neural-networks/
 │   │   └── MultiInput.lean      # The theorem for several inputs
 │   ├── LinearRegions.lean       # Entry point for the region bound
 │   └── LinearRegions/
-│       └── OneInput.lean        # The bound for one input
+│       ├── ActivationPattern.lean # Activation patterns and their count
+│       ├── OneInput.lean        # The bound for one input
+│       └── MultiInput.lean      # The bound for several inputs
 └── Example/
     ├── Plot.lean                # Shared sampling and plotting helpers
     ├── WithBias.lean            # Numerical example and plots
@@ -222,6 +224,16 @@ of `S` split the real line into at most `D + 1` linear regions.
 nonzero input weight, each unit is affine on an interval with no joint inside
 (its preactivation keeps one sign there), and a weighted sum of affine functions
 is affine.
+
+`MultiInput.lean` proves the bound for `Dᵢ` inputs
+(`MultiInput.LinearRegionBound`, `MultiInput.linearRegionBound`): the inputs fall
+into at most `∑ j ≤ Dᵢ, (D choose j)` activation patterns, the sets of hidden
+units with positive preactivation, and the network is affine on each. For
+`Dᵢ = 1` this is `D + 1`; for `Dᵢ = 2` it is `1 + D + D * (D - 1) / 2`. Rather
+than counting cells of the hyperplane arrangement, the proof shows that no
+`Dᵢ + 1` units realize all their on/off combinations, because their weight
+vectors in `ℝ^Dᵢ` are linearly dependent, and then applies the Sauer–Shelah
+lemma. `ActivationPattern.lean` holds the definitions and both supporting facts.
 
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
