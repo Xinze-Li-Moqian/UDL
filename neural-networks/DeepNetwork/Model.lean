@@ -32,6 +32,12 @@ while the parameters `β_k` and `Ω_k` are its values. For example,
 `DeepNetworkParameters ℝ 1 [3, 3] 1` is the family of networks with one input,
 two hidden layers of three units, and one output (Section 4.3). With `widths = []`
 there are no hidden layers and the network is a single affine map.
+
+Section 4.3.1 names these hyperparameters. `depth` is the number of hidden layers
+`K`, `width k` is the number of hidden units `D_k` in layer `k`, and `capacity` is
+the total number of hidden units. Like `networkCapacity` for shallow networks,
+they depend only on the architecture, not on the parameter values. Lean numbers
+the layers from `0` to `K - 1`; the book numbers them from `1` to `K`.
 -/
 
 @[expose] public section
@@ -57,6 +63,24 @@ one layer per hidden width, followed by the output layer. -/
 def DeepNetworkParameters (Scalar : Type) : ℕ → List ℕ → ℕ → Type
   | Dᵢ, [], Dₒ => LayerParameters Scalar Dᵢ Dₒ
   | Dᵢ, D :: widths, Dₒ => LayerParameters Scalar Dᵢ D × DeepNetworkParameters Scalar D widths Dₒ
+
+namespace DeepNetworkParameters
+
+variable {Scalar : Type} {Dᵢ Dₒ : ℕ} {widths : List ℕ}
+
+/-- The depth `K`: the number of hidden layers. -/
+def depth (_ : DeepNetworkParameters Scalar Dᵢ widths Dₒ) : ℕ :=
+  widths.length
+
+/-- The width `D_k`: the number of hidden units in layer `k`. -/
+def width (_ : DeepNetworkParameters Scalar Dᵢ widths Dₒ) (k : Fin widths.length) : ℕ :=
+  widths[k]
+
+/-- The capacity: the total number of hidden units. -/
+def capacity (_ : DeepNetworkParameters Scalar Dᵢ widths Dₒ) : ℕ :=
+  widths.sum
+
+end DeepNetworkParameters
 
 /-- Equation (4.16): apply each hidden layer `h ↦ a[β + Ω h]` in turn, then the
 output layer `h ↦ β + Ω h`. -/

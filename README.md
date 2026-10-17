@@ -280,6 +280,7 @@ neural-networks/
 ├── DeepNetwork.lean             # Entry point for Sections 4.3–4.4
 └── DeepNetwork/
     ├── Model.lean               # Deep networks in matrix notation
+    ├── WidthThree.lean          # Two layers of three units, named parameters
     └── Verification.lean        # Definition checks
 ```
 
@@ -309,7 +310,23 @@ the output layer; the hidden widths are part of the type, so consecutive layers
 always have matching sizes. `deepNetwork activation Φ x` evaluates equation
 (4.16), applying the layers `h ↦ a[β + Ω h]` in turn and then the output layer.
 For example, `DeepNetworkParameters ℝ 1 [3, 3] 1` is the two-layer network of
-Section 4.3. `DeepNetwork/Verification.lean` checks that a deep network with one
-hidden layer is a shallow network: `MultiInput.Parameters.toDeep` converts a
-shallow network with `Dᵢ` inputs and width `D` into a deep network with hidden
-widths `[D]`, and `deepNetwork_toDeep` shows that both compute the same output.
+Section 4.3. The hyperparameters of Section 4.3.1 are read off the type:
+`Φ.depth` is the number of hidden layers `K`, `Φ.width k` is the number of
+hidden units `D_k` in layer `k` (numbered from `0`), and `Φ.capacity` is the total
+number of hidden units.
+
+`neural-networks/DeepNetwork/WidthThree.lean` gives that network with the book's
+named parameters, equations (4.7)–(4.9): six `θ` for the first layer, twelve `ψ`
+for the second, and four `φ'` for the output. `WidthThree.DeepParameters` stores
+them, `toDeepNetworkParameters` arranges them into the bias vectors and weight
+matrices of equations (4.11)–(4.13), and `WidthThree.deepNetwork` evaluates the
+network at a scalar input.
+
+`DeepNetwork/Verification.lean` checks that a deep network with one hidden layer
+is a shallow network: `MultiInput.Parameters.toDeep` converts a shallow network
+with `Dᵢ` inputs and width `D` into a deep network with hidden widths `[D]`, and
+`deepNetwork_toDeep` shows that both compute the same output; the converted
+network has depth one and capacity `D` (`toDeep_capacity`). The capacity is the
+sum of the layer widths (`capacity_eq_sum_width`). It also checks that
+the width-three network expands to the single expression of equation (4.10)
+(`WidthThree.deepNetwork_eq`).
