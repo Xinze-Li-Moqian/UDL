@@ -21,4 +21,4 @@ lean_lib SupervisedLearning where
 @[default_target]
 lean_lib NeuralNetworks where
   srcDir := "neural-networks"
-  roots := #[`ActivationFunction, `ActivationPlot]
+  roots := #[`ActivationFunction, `ShallowNetwork, `ShallowNetworkExample, `ActivationPlot]

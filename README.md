@@ -13,7 +13,7 @@ The repository brings together theory notes, implementations, and experiments.
 Lean 4 is used to express mathematical definitions and verify selected results.
 
 Current topics include supervised learning, linear regression, loss functions,
-gradient descent, discriminative versus generative models, and activation functions.
+gradient descent, discriminative versus generative models, and shallow neural networks.
 
 Ideas and exercises from the book are integrated into modules by topic, with
 source references in the code.
@@ -90,13 +90,38 @@ to see the three exact values `7`, `7`, and `1`, followed by the training result
 This topic is being developed one definition at a time, starting with Section 3.1.
 `neural-networks/ActivationFunction.lean` defines the type of a scalar activation
 function, `Scalar → Scalar`, and ReLU: preserve nonnegative inputs and return zero
-for negative inputs. It also defines a hidden unit, `activation (bias + weight * x)`.
+for negative inputs.
+
+`neural-networks/ShallowNetwork.lean` imports the activation definitions and defines
+a hidden unit, `activation (bias + weight * x)`. It then builds the three hidden
+units from equation (3.3) and combines them as
+`φ₀ + φ₁ * h₁ + φ₂ * h₂ + φ₃ * h₃`, equation (3.4). The activation function is
+an argument; passing `relu` gives the book's ReLU network.
+`ShallowNetworkParameters` packages the ten parameters into one object `Φ`;
+`shallowNetworkWithParameters activation x Φ` evaluates the same network using
+that object, corresponding to the notation `fₐ(x; Φ)`.
 Run `lake build` to check these modules along with the existing supervised-learning
 modules.
 
+`neural-networks/ShallowNetworkExample.lean` constructs a concrete parameter object
+and evaluates `f x Φ` with exact rational arithmetic. It uses
+`ReLU(x) - 2 * ReLU(x - 1) + ReLU(x - 2)`, printing all three hidden activations
+and the output at several inputs. For example, at `x = 3/2`, the hidden values
+are `(3/2, 1/2, 0)` and the output is `1/2`. Run:
+
+```sh
+lake env lean neural-networks/ShallowNetworkExample.lean
+```
+
 For a visual example, open `neural-networks/ActivationPlot.lean` in VS Code with
 the Lean extension and place the cursor on `#html activationPlots`. The Lean
-Infoview shows `ReLU(x)` and `ReLU(x - 1)` using ProofWidgets. Both plots evaluate
-the existing definitions with `Float` samples and connect the samples with
-straight segments. Change the bias and weight in the `hiddenUnit` call to explore
-how the graph changes.
+Infoview shows the same example's three affine inputs, ReLU activations, weighted
+contributions, and final output using ProofWidgets. All panels use the existing
+`exampleParameters` and evaluate 81 rational inputs from `-1` to `3`; coordinates
+are converted to floats only for plotting and joined with straight segments.
+At `x = 1.5`, the three contributions are `1.5`, `-1`, and `0`, giving `y = 0.5`.
+Export the same plotted data as JSON with:
+
+```sh
+lake env lean --run neural-networks/ActivationPlot.lean
+```

@@ -3,12 +3,11 @@ module
 /-!
 # Activation functions
 
-Source: Understanding Deep Learning, Section 3.1, equations (3.2)–(3.3).
+Source: Understanding Deep Learning, Section 3.1, equation (3.2).
 
 An activation function `a` takes a scalar preactivation `z` and returns a scalar
 activation `a[z]`. ReLU is one choice: negative inputs become zero and
 nonnegative inputs are preserved.
-A hidden unit applies the chosen activation to an affine input: `a[bias + weight * x]`.
 -/
 
 @[expose] public section
@@ -26,11 +25,5 @@ def relu {Scalar : Type} [Zero Scalar] [LE Scalar] [DecidableLE Scalar] :
       z
     else
       0
-
-/-- A hidden unit: `h(x) = a[bias + weight * x]`. -/
-def hiddenUnit {Scalar : Type} [Add Scalar] [Mul Scalar]
-    (activation : ActivationFunction Scalar)
-    (bias weight x : Scalar) : Scalar :=
-  activation (bias + weight * x)
 
 end NeuralNetworks
