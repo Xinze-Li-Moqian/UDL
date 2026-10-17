@@ -1,13 +1,17 @@
 module
 
-public import LinearRegression
+public import Discriminative.LinearRegression
 public import GradientDescent
 
-/-! Gradient descent for the linear regression model in Figure 2.4. -/
+/-!
+Gradient descent for the discriminative linear regression model in Figure 2.4.
+This file supplies the model's gradient to the shared iteration rule in
+`optimization/GradientDescent.lean`, also used by generative training.
+-/
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
 
@@ -38,4 +42,4 @@ def trainLinearRegression (data : TrainingDataset Scalar 1 1 I)
     (stepSize : Scalar) (initial : Parameters Scalar) (steps : Nat) : Parameters Scalar :=
   Optimization.gradientDescent (leastSquaresGradient data) stepSize initial steps
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

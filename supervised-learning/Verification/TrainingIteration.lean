@@ -1,6 +1,6 @@
 module
 
-public import LinearRegressionTraining
+public import Discriminative.LinearRegressionTraining
 
 /-!
 # Training iteration verification
@@ -10,7 +10,7 @@ Zero steps preserve the initial parameters, and training can be continued in sta
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
 variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
@@ -33,4 +33,4 @@ theorem trainLinearRegression_add_steps (stepSize : Scalar)
   | succ n ih =>
       exact congrArg (Optimization.gradientDescentStep (leastSquaresGradient data) stepSize) ih
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

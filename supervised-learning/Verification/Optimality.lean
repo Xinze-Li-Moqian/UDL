@@ -10,7 +10,7 @@ The two loss expressions have the same minimizer condition, as in equation (2.6)
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
 variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
@@ -22,4 +22,4 @@ theorem isLeastSquaresMinimizer_iff_expanded [LE Scalar] (φBest : Parameters Sc
     IsLeastSquaresMinimizer data φBest ↔
       Optimization.IsArgmin (expandedLeastSquaresLoss data) φBest := Iff.rfl
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

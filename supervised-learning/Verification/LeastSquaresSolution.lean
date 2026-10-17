@@ -13,14 +13,41 @@ public import Mathlib.Tactic.Ring
 /-!
 # Least-squares solutions
 
-The two normal equations make the cross term in the loss expansion vanish.
-Every stationary parameter pair therefore minimizes the loss globally.
-No assumption on the number or distinctness of inputs is needed here.
+Source: Understanding Deep Learning, Chapter 2, equation (2.5) and Problem 2.2.
+
+Write `Sx = Σᵢ xᵢ`, `Sy = Σᵢ yᵢ`, `Sxx = Σᵢ xᵢ²`, and `Sxy = Σᵢ xᵢ yᵢ`.
+Setting both partial derivatives to zero gives the normal equations:
+
+`I * φ₀ + Sx * φ₁ = Sy`,
+`Sx * φ₀ + Sxx * φ₁ = Sxy`.
+
+If `D = I * Sxx - Sx²` is nonzero, solving these equations gives
+`φ₀ = (Sy * Sxx - Sx * Sxy) / D` and
+`φ₁ = (I * Sxy - Sx * Sy) / D`.
+These explicit parameters witness the existence of a global minimizer.
+For nonempty data, `D = I * Σᵢ (xᵢ - mean(x))²`, so the nonzero condition
+means that the inputs are not all identical. The minimizing pair is then unique.
+
+At any stationary parameter pair `φ`, the two normal equations make the cross
+term vanish in the loss expansion:
+
+`L[ψ] = L[φ] + Σᵢ ((ψ₀ - φ₀) + (ψ₁ - φ₁) * xᵢ)² ≥ L[φ]`.
+
+Thus every stationary pair is a global minimizer, without assumptions on the
+number or distinctness of inputs. Conversely, every minimizer is stationary.
+
+For nonempty data with all inputs equal to `c`, any pair satisfying
+`φ₀ + c * φ₁ = mean(y)` minimizes the loss; one choice is `(mean(y), 0)`.
+With no training pairs, the loss is zero for every parameter pair.
+
+More complex models may require iterative fitting because their derivative
+equations have no closed-form solution. Iteration alone does not guarantee
+that a global minimum is reached.
 -/
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {I : Nat}
 
@@ -129,6 +156,27 @@ theorem isLeastSquaresMinimizer_iff_stationary
   ⟨isLeastSquaresStationary_of_minimizer data φ,
     isLeastSquaresMinimizer_of_stationary data φ⟩
 
+/-- The explicit least-squares parameters, valid when the determinant is nonzero. -/
+noncomputable def closedFormParameters (data : TrainingDataset ℝ 1 1 I) : Parameters ℝ :=
+  let Sx := ∑ i : Fin I, (data.x i)[0]
+  let Sy := ∑ i : Fin I, (data.y i)[0]
+  let Sxx := ∑ i : Fin I, (data.x i)[0] ^ 2
+  let Sxy := ∑ i : Fin I, (data.x i)[0] * (data.y i)[0]
+  let D := normalEquationDeterminant data
+  { φ₀ := (Sy * Sxx - Sx * Sxy) / D
+    φ₁ := ((I : ℝ) * Sxy - Sx * Sy) / D }
+
+/-- A minimizer exists when the normal-equation determinant is nonzero. -/
+theorem exists_leastSquaresMinimizer (data : TrainingDataset ℝ 1 1 I)
+    (hD : normalEquationDeterminant data ≠ 0) :
+    ∃ φ : Parameters ℝ, IsLeastSquaresMinimizer data φ := by
+  refine ⟨closedFormParameters data, ?_⟩
+  -- It suffices to verify the two normal equations for this witness.
+  apply isLeastSquaresMinimizer_of_stationary
+  apply (isLeastSquaresStationary_iff_normalEquations data _).mpr
+  dsimp [closedFormParameters]
+  constructor <;> field_simp [hD] <;> dsimp [normalEquationDeterminant] <;> ring
+
 private theorem normalEquations_unique (n s q t u a b a' b' : ℝ)
     (hD : n * q - s ^ 2 ≠ 0)
     (h₀ : n * a + s * b = t) (h₁ : s * a + q * b = u)
@@ -169,4 +217,4 @@ theorem constantInput_mean_minimizer
       Fintype.card_fin, nsmul_eq_mul, ← Finset.mul_sum]
     field_simp
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

@@ -1,10 +1,10 @@
 module
 
-public import SupervisedLearning
+public import Discriminative.Model
 public import Argmin
 
 /-!
-# Linear regression
+# Discriminative linear regression
 
 The single-input, single-output model from Chapter 2 of Understanding Deep Learning:
 `y = f[x, φ] = φ₀ + φ₁ * x`.
@@ -14,7 +14,7 @@ The scalar input and output are represented by one-element vectors to fit `Model
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 /-- The model parameters `φ = (φ₀, φ₁)`. -/
 structure Parameters (Scalar : Type) where
@@ -55,4 +55,4 @@ def IsLeastSquaresMinimizer [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
   let L := leastSquaresLoss data
   Optimization.IsArgmin L φBest
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

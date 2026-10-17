@@ -1,7 +1,7 @@
 import Lake
 open Lake DSL
 
-package fintech
+package udl
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"
@@ -13,5 +13,7 @@ lean_lib Optimization where
 @[default_target]
 lean_lib SupervisedLearning where
   srcDir := "supervised-learning"
-  roots := #[`SupervisedLearning, `LinearRegression, `LinearRegressionTraining,
-    `Verification, `Problems]
+  roots := #[`SupervisedLearning, `Discriminative.Model,
+    `Discriminative.LinearRegression, `Discriminative.LinearRegressionTraining,
+    `Generative.Model, `Generative.LinearRegression, `Generative.LinearRegressionTraining,
+    `Examples, `Verification]

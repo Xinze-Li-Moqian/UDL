@@ -19,7 +19,7 @@ nonincreasing loss. This does not establish convergence or finite-step optimalit
 
 open scoped BigOperators
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {I : Nat}
 
@@ -110,4 +110,4 @@ theorem trainLinearRegression_loss_le_initial_of_stepSize
   trainLinearRegression_loss_le_initial data stepSize
     (trainLinearRegression_one_step_loss_le data stepSize hStepSize hBound) initial steps
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

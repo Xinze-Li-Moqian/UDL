@@ -1,15 +1,14 @@
-# FinTech, Reinforcement Learning & Deep Learning
+# UDL — Understanding Deep Learning
 
-A personal learning and experimentation repository for financial technology (FinTech), reinforcement learning (RL), and deep learning (DL).
+A learning repository for Understanding Deep Learning by Simon J. D. Prince,
+using Lean 4 to connect mathematical definitions, algorithms, proofs, and runnable
+experiments.
 
-The aim is to build understanding through theory notes, algorithm implementations, paper reproductions, and experiments. Each area has room for its own foundations, with connections explored as questions and interests develop.
+The current focus is Chapter 2: supervised learning, linear regression, loss
+functions, gradient descent, and discriminative versus generative models.
 
-## Areas of Study
-
-- **FinTech:** Financial concepts, data, and computational approaches to financial problems.
-- **Reinforcement Learning:** Sequential decision-making, learning algorithms, and agent evaluation.
-- **Deep Learning:** Neural networks, optimization, model architectures, and representation learning.
-- **Connections:** Applications of DL and RL to financial problems, grounded in clear assumptions and careful evaluation.
+Book exercises contribute directly to the corresponding theory and implementation
+modules, with their source noted in the code.
 
 ## Working Approach
 
@@ -35,18 +34,45 @@ Proofs are grouped by topic in `supervised-learning/Verification/`:
 - `Optimality.lean`: equivalence of the minimizer conditions.
 - `TrainingIteration.lean`: zero steps and training in stages.
 - `TrainingLoss.lean`: the loss bound assuming every update does not increase loss.
-- `GradientFormula.lean`: the two partial derivatives over the reals.
-- `StepSize.lean`: a sufficient step-size condition for nonincreasing loss.
-- `LeastSquaresSolution.lean`: normal equations, global minimality, and uniqueness.
+- `GradientFormula.lean`: the two partial derivatives over the reals for each model direction,
+  including explicit formulas for the discriminative loss.
+- `StepSize.lean`: a sufficient step-size condition for nonincreasing discriminative loss.
+- `LeastSquaresSolution.lean`: normal equations, the closed-form parameters and proof of
+  existence when the determinant is nonzero, global minimality, and uniqueness.
+- `ModelComparison.lean`: an exact three-point counterexample showing that globally
+  optimal discriminative and generative fits can predict differently.
 
-`supervised-learning/Verification.lean` imports all seven topics. The training proofs
+`supervised-learning/Verification.lean` imports all verification topics. The training proofs
 do not establish convergence or that a finite run finds an exact minimizer.
 
-Chapter 2 exercises are in `supervised-learning/Problems/`, with one Lean file
-per problem: `Problem2_1.lean`, `Problem2_2.lean`, and `Problem2_3.lean`.
-Problem 2.1 includes the two partial derivative formulas proved directly in Lean,
-reusing `Verification/GradientFormula.lean`. Problem 2.2 has one explicit parameter
-definition and one existence theorem: when the normal-equation determinant is nonzero,
-these parameters witness a global minimum. Its notes also explain degenerate datasets.
-Problem 2.3 currently contains its statement and learning goals.
-`Problems.lean` imports all three files.
+Material from Understanding Deep Learning is integrated by mathematical topic.
+Chapter 2, Problems 2.1–2.3 motivate the gradient formulas, closed-form solution,
+and model comparison respectively; their numbers remain as source references in
+those modules. Definitions live with the models, proofs in `Verification/`, and
+executable experiments in `Examples.lean`. The model-comparison proof and the
+training experiment share the same three-point dataset.
+
+`supervised-learning/SupervisedLearning.lean` contains the shared input, output,
+training-dataset, and loss-function types. Models are grouped by direction:
+
+- `Discriminative/`: `Model.lean` defines `y = f[x, φ]` and direct inference;
+  `LinearRegression.lean` defines its linear model and loss;
+  `LinearRegressionTraining.lean` defines gradient descent training.
+- `Generative/`: `Model.lean` defines `x = g[y, φ]`;
+  `LinearRegression.lean` defines its linear model, loss, minimizer condition,
+  and inverse inference requiring a nonzero slope;
+  `LinearRegressionTraining.lean` supplies its gradient for training.
+
+Both training files call the same `Optimization.gradientDescent` function in
+`optimization/GradientDescent.lean`. This shared optimizer updates parameters;
+each model supplies the gradient of its own loss. The discriminative slope
+gradient uses `xᵢ`, while the generative slope gradient uses `yᵢ`.
+
+`supervised-learning/Examples.lean` uses the same affine formula in three short
+scenarios: discriminative prediction, generative evaluation, and inference by
+inverting the generative model. It also trains both directions on the same three
+pairs for 500 updates, printing parameters, loss before and after training, and
+predictions. Arithmetic is rational; training results are displayed as rounded
+decimals. Each model's loss measures a different output quantity, so compare it
+to its own initial loss. Run `lake env lean supervised-learning/Examples.lean`
+to see the three exact values `7`, `7`, and `1`, followed by the training results.

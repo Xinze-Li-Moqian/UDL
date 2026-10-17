@@ -1,6 +1,6 @@
 module
 
-public import LinearRegressionTraining
+public import Discriminative.LinearRegressionTraining
 
 /-!
 # Training loss verification
@@ -11,7 +11,7 @@ A single-step nonincrease assumption gives a loss bound for any finite training 
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
 variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
@@ -33,4 +33,4 @@ theorem trainLinearRegression_loss_le_initial (stepSize : Scalar)
   | succ k ih =>
       exact Std.le_trans (hStep (trainLinearRegression data stepSize initial k)) ih
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression

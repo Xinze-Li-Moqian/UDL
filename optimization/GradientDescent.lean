@@ -4,6 +4,8 @@ module
 # Gradient descent
 
 The caller supplies a gradient function, a step size, and initial parameters.
+The update rule is shared across models, including both directions of linear
+regression. Model-specific training files supply the appropriate loss gradient.
 These definitions implement the update rule. They impose no step-size
 restriction; properties such as decreasing loss require assumptions and proofs.
 -/

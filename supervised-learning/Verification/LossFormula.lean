@@ -1,6 +1,6 @@
 module
 
-public import LinearRegression
+public import Discriminative.LinearRegression
 
 /-!
 # Loss formula verification
@@ -10,7 +10,7 @@ The least-squares loss agrees with the expanded expression in equation (2.5).
 
 @[expose] public section
 
-namespace SupervisedLearning.LinearRegression
+namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
 variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
@@ -27,4 +27,4 @@ def expandedLeastSquaresLoss : LossFunction Scalar (Parameters Scalar) :=
 theorem leastSquaresLoss_eq_expanded :
     leastSquaresLoss data = expandedLeastSquaresLoss data := rfl
 
-end SupervisedLearning.LinearRegression
+end SupervisedLearning.Discriminative.LinearRegression
