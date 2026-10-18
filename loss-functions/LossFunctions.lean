@@ -6,4 +6,5 @@ public import LossFunctions.MaximumLikelihood
 public import LossFunctions.LogLikelihood
 public import LossFunctions.NegativeLogLikelihood
 public import LossFunctions.Inference
+public import LossFunctions.UnivariateRegression
 public import LossFunctions.Examples.Data.ToyRegression

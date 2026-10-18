@@ -6,7 +6,9 @@ public import Mathlib.Algebra.BigOperators.Fin
 # Empirical loss
 
 Fix a model `f`, training pairs `(xᵢ, yᵢ)`, and a single-example loss `ℓ`.
-The empirical loss is `L[φ] = ∑ᵢ ℓ(f(xᵢ, φ), yᵢ)`.
+The empirical loss is
+
+    L[φ] = ∑ᵢ ℓ(f(xᵢ, φ), yᵢ),    i = 1, …, I.
 
 ```lean
 open scoped LossFunctions
@@ -44,7 +46,10 @@ scoped instance :
 
 variable {X : Type w} {Prediction : Type r} {Y : Type s} {I : Nat}
 
-/-- Sum `ℓ(f(xᵢ, φ), yᵢ)` over the training pairs, without averaging.
+/-- Sum the single-example losses over the training pairs, without averaging.
+
+    L[φ] = ∑ᵢ ℓ(f(xᵢ, φ), yᵢ),    i = 1, …, I.
+
 Predictions may be values or distribution parameters, so `Prediction` and `Y`
 are separate types. -/
 def empiricalLoss [AddCommMonoid Scalar] (ℓ : Prediction → Y → Scalar)

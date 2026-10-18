@@ -136,6 +136,40 @@ Section 5.2 assembles these existing definitions into the book's recipe:
 Step 3 specifies the training objective; an algorithm for fitting general
 deep networks is still to be added.
 
+Univariate regression has its own
+[`UnivariateRegression/`](LossFunctions/UnivariateRegression/README.md) directory,
+with [`UnivariateRegression.lean`](LossFunctions/UnivariateRegression.lean)
+as the import entry point. Here "univariate" means a single real-valued output;
+the input and distribution-parameter types are arbitrary.
+
+[`Model.lean`](LossFunctions/UnivariateRegression/Model.lean) defines the shared
+`Model` interface from an existing distribution family, its certified density,
+and a predictor of distribution parameters. `model.predictiveDistribution`
+returns the full output distribution; `model.loss` reuses `negativeLogLikelihood`.
+The distribution-independent `leastSquaresLoss` also lives here.
+
+Sections 5.3–5.3.3 are implemented in
+[`Gaussian.lean`](LossFunctions/UnivariateRegression/Gaussian.lean).
+`gaussianModel f v` instantiates the shared interface using
+`ProbabilityModels.Gaussian`. `gaussianParameters` pairs the predicted mean
+`f x φ` with a fixed positive variance `v = σ²`; `gaussianLoss` uses this
+model's shared loss operation. Other distributions can add their own modules.
+
+`gaussianLoss_eq` proves the exact identity
+`L[φ] = (I / 2) * log (2 * π * v) + S[φ] / (2 * v)`.
+The constant and scale are independent of `φ`, and the scale is positive.
+`mem_argmin_gaussianLoss_iff` therefore proves that the two losses have the
+same minimizers, without asserting existence or uniqueness.
+`mean_isModePrediction` reuses the Gaussian mode theorem for inference.
+
+For Section 5.3.3, `gaussianModelWithLearnedVariance` extends the model parameters
+to a pair `(φ, v)` with `v > 0`. `jointGaussianLoss` uses the same shared loss
+operation, and `IsGaussianJointEstimator` states joint optimality. Its exact
+loss expansion retains both variance-dependent terms. This defines the fitting
+criterion; it does not compute an estimate or assert that a minimizer exists.
+`learnedVariance_mean_isModePrediction` proves that the predicted mean is still
+a mode with this parameterization. Heteroscedastic regression (5.3.4) is next.
+
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed
 perturbations, for future training examples.

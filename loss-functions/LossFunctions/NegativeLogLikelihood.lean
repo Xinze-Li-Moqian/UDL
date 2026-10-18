@@ -26,8 +26,10 @@ open scoped LossFunctions ProbabilityModels Optimization
 variable {X Y Θ Parameters : Type*} [MeasurableSpace Y]
 variable {family : Family Θ Y} {ν : Measure Y} {I : ℕ}
 
-/-- Equation (5.4): fixing the density, model, and data gives the loss
-`L[φ] = -∑ᵢ log p(yᵢ | f[xᵢ, φ])` as a function of parameters. -/
+/-- Equation (5.4): fix the density, model, and data to obtain a loss on parameters.
+
+    L[φ] = −∑ᵢ log p(yᵢ | f(xᵢ, φ)),    i = 1, …, I.
+-/
 noncomputable def negativeLogLikelihood (p : family.Density ν) (f : X → Parameters → Θ)
     (x : Fin I → X) (y : Fin I → Y) : LossFunction ℝ Parameters :=
   empiricalLoss (fun θ target => -Real.log Pr[target | θ; p]) f x y

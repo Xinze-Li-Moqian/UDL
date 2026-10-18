@@ -184,6 +184,8 @@ variance. `positiveGaussianFamily` restricts the existing Gaussian family to
 these parameters, and `positiveGaussianDensity` certifies its usual density
 relative to Lebesgue measure. The density is strictly positive everywhere;
 `positiveGaussianDensity_le_mean` proves that it attains its maximum at the mean.
+`neg_log_positiveGaussianDensity` expands its negative logarithm into a
+normalization term and a variance-scaled squared error, for use in Gaussian losses.
 The original `gaussianFamily` still includes variance zero, which gives a
 Dirac measure and has no Lebesgue density.
 

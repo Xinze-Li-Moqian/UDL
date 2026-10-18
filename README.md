@@ -474,5 +474,12 @@ separate modules, proving equivalence of their optimality criteria with
 maximum likelihood under strictly positive observed densities.
 Section 5.1.5 defines mode-based point predictions with fixed model parameters
 and proves that the predicted Gaussian mean satisfies this criterion.
+Sections 5.3–5.3.2 specialize to real-valued regression with fixed positive
+Gaussian variance, proving that negative log-likelihood and least squares
+have the same minimizers and that the predicted mean is a mode.
+Section 5.3.3 adds a joint objective for the model parameters and a shared
+positive variance, reusing the same Gaussian family and loss construction.
+The `loss-functions/LossFunctions/UnivariateRegression/` directory separates
+the shared model interface from distribution-specific implementations.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.
