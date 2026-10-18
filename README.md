@@ -97,7 +97,8 @@ neural-networks/
 ├── Bias.lean
 ├── ActivationFunction.lean
 ├── ActivationFunction/
-│   └── Sigmoid.lean             # Logistic sigmoid and its probability range
+│   ├── Sigmoid.lean             # Logistic sigmoid and its probability range
+│   └── Softmax.lean             # Vector scores to normalized probabilities
 ├── ShallowNetwork.lean          # Library entry point
 ├── ShallowNetwork/
 │   ├── Model.lean               # Shallow network definitions
@@ -138,6 +139,11 @@ as `NeuralNetworks.sigmoid : ActivationFunction ℝ`. It proves the formula
 `sig(z) = 1 / (1 + exp(−z))`, strict range `(0, 1)`, value `sig(0) = 1/2`,
 monotonicity, and the correspondence between score zero and probability one
 half. The Section 5.4 binary-classification example uses this shared interface.
+
+`neural-networks/ActivationFunction/Softmax.lean` defines the vector transformation
+`softmax z k = exp(z k) / ∑ j, exp(z j)`. For a nonempty label set it proves
+positive outputs, sum one, and preservation of label ordering. The multiclass
+example uses its outputs as parameters of the existing categorical family.
 
 `neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
 constant offset represented by the orange edges in the network diagram.
@@ -496,5 +502,13 @@ Section 5.4 is implemented in `LossFunctions/Examples/BinaryClassification/`:
 sigmoid probabilities, the binary cross-entropy identity, maximum-likelihood
 equivalence, and a mode-based threshold prediction. Its probability masses reuse the same density
 interface as the regression models, with counting measure as reference.
+Figure 5.9 adds the categorical probability foundation and a three-category
+example in `LossFunctions/Examples/MulticlassClassification/`, verifying the
+specified probabilities, normalization, and a most likely label.
+Equations (5.22)–(5.23) add a softmax predictor of categorical parameters,
+with a proof that most probable labels are exactly labels with maximal scores.
+Equation (5.24) adds the reusable single-example multiclass cross-entropy
+and proves both the softmax-probability and log-sum-exp forms of the empirical
+loss, together with its maximum-likelihood equivalence.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.

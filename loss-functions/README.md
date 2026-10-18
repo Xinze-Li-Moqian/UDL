@@ -33,6 +33,13 @@ endpoint behavior follows the totalized real logarithm used by the shared
 negative log-likelihood. The classification example sums this loss using
 `empiricalLoss` and proves agreement with the common negative log-likelihood.
 
+[`MulticlassCrossEntropy.lean`](LossFunctions/MulticlassCrossEntropy.lean)
+defines the corresponding single-example categorical loss
+`multiclassCrossEntropy p y = −log(p.weights y)`. Here `p` is a probability
+vector and `y` selects the observed label. This loss is independent of the
+model and softmax; its usual finite interpretation requires positive mass
+at the observed label.
+
 `EmpiricalLoss.lean` also enables the book's `L[φ]` notation with
 `open scoped LossFunctions`. Here `L` is the actual loss function
 bound in the surrounding expression; `L[φ]` means `L φ`.
@@ -198,6 +205,19 @@ Its Bernoulli model uses the shared `ActivationFunction.Sigmoid` interface
 theorem gives equation (5.20). Strictly positive predicted masses supply the
 likelihood-equivalence hypotheses. The probability threshold rule, selecting
 label 1 above one half and label 0 otherwise, is proved to select a mode.
+
+Figure 5.9 begins the next example in
+[`Examples/MulticlassClassification/`](LossFunctions/Examples/MulticlassClassification/README.md).
+Its categorical probabilities are specified as cat 0.7, dog 0.2, bird 0.1.
+The example verifies the probabilities, their sum, and that cat is a mode,
+using `ProbabilityModels.Categorical`.
+`Examples/MulticlassClassification/Softmax.lean` connects a vector-valued
+predictor to the same categorical family using `ActivationFunction.Softmax`.
+It proves equation (5.23), positivity of predicted masses, and equivalence
+between probability modes and maximal raw scores.
+`Examples/MulticlassClassification/CrossEntropy.lean` sums the reusable
+single-example loss using `empiricalLoss`, proves both lines of equation
+(5.24), and reuses maximum-likelihood equivalence for the resulting objective.
 
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed

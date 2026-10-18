@@ -15,6 +15,8 @@ bias: `relu z` uses zero, while `relu z bias` adds that bias before rectifying.
 Passing `relu` as an `ActivationFunction` uses the default zero bias.
 Import `ActivationFunction.Sigmoid` for the real logistic sigmoid and its
 probability-range and score-threshold properties.
+Import `ActivationFunction.Softmax` for a vector output transformation that
+normalizes real scores into categorical probabilities.
 -/
 
 @[expose] public section

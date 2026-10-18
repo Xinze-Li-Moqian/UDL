@@ -6,6 +6,7 @@ public import ProbabilityModels.Variance
 public import ProbabilityModels.StandardDeviation
 public import ProbabilityModels.Gaussian
 public import ProbabilityModels.Bernoulli
+public import ProbabilityModels.Categorical
 public import ProbabilityModels.ConditionalProbability
 public import ProbabilityModels.ConditionalDistribution
 public import ProbabilityModels.ConditionalExpectation
@@ -28,6 +29,8 @@ distributions, conditioning, densities, and independence. `Family` connects
 parameterized distributions to predictors, and `Gaussian` adapts Mathlib's
 real Gaussian measures to that interface. `Bernoulli` supplies binary labels
 with a certified mass function relative to counting measure.
+`Categorical` supplies the corresponding interface for finite probability vectors,
+using Mathlib's standard simplex and probability mass functions.
 
 Each topic can also be imported individually, for example
 `ProbabilityModels.Expectation` or `ProbabilityModels.Gaussian`.

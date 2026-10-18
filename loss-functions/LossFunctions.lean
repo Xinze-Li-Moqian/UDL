@@ -2,6 +2,7 @@ module
 
 public import LossFunctions.EmpiricalLoss
 public import LossFunctions.BinaryCrossEntropy
+public import LossFunctions.MulticlassCrossEntropy
 public import LossFunctions.PredictiveDistribution
 public import LossFunctions.MaximumLikelihood
 public import LossFunctions.LogLikelihood
@@ -9,4 +10,5 @@ public import LossFunctions.NegativeLogLikelihood
 public import LossFunctions.Inference
 public import LossFunctions.UnivariateRegression
 public import LossFunctions.Examples.BinaryClassification
+public import LossFunctions.Examples.MulticlassClassification
 public import LossFunctions.Examples.Data.ToyRegression

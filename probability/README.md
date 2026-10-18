@@ -15,6 +15,7 @@ Each concept has its own file in `ProbabilityModels/`:
 | `StandardDeviation.lean` | Square-root definition, affine transformations, and zero standard deviation |
 | `Gaussian.lean` | Gaussian families, a positive-variance density adapter, its maximum at the mean, and standard deviation |
 | `Bernoulli.lean` | Bernoulli families on binary labels, certified masses, and the negative log-mass expansion |
+| `Categorical.lean` | Finite categorical families, probability-vector constraints, and certified masses |
 | `ConditionalProbability.lean` | Event conditioning, normalization, ratio and Bayes rules |
 | `ConditionalDistribution.lean` | Predictive kernels and the links between conditional laws and expectations |
 | `ConditionalExpectation.lean` | Defining integral identity, measurability, averaging, and the tower property |
@@ -39,6 +40,13 @@ for label 0. `bernoulliMass` certifies these masses as a density relative to
 counting measure, and `neg_log_bernoulliMass` supplies the binary cross-entropy
 identity. Endpoint parameters are allowed in the family; positive masses for
 both labels require an interior parameter.
+
+`Categorical.lean` provides `categoricalFamily` and `categoricalMass` for
+`Fin K` labels. `CategoricalParameters K` reuses Mathlib's
+`Convexity.StdSimplex ℝ (Fin K)` to enforce nonnegative probabilities with
+sum one. `CategoricalParameters.ofProbabilities` accepts a vector and proofs
+of these constraints. The construction uses Mathlib's `PMF`, and the mass
+adapter proves that each specified weight is the corresponding event probability.
 
 Expectation and variance retain Mathlib's integrability assumptions and
 totalization conventions. In particular, use `MemLp X 2 μ` for a finite second
