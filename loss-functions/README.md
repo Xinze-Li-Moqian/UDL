@@ -179,6 +179,16 @@ The module proves the loss expansion and mode inference, and implements the
 book's squared second output with an explicit nonzero-output hypothesis.
 See [the directory guide](LossFunctions/UnivariateRegression/Heteroscedastic/README.md).
 
+Section 5.4 is an application of the shared interfaces in
+[`Examples/BinaryClassification/`](LossFunctions/Examples/BinaryClassification/README.md),
+imported through `LossFunctions.Examples.BinaryClassification`. Labels use `Fin 2`.
+Its Bernoulli model applies Mathlib's sigmoid to a real model score and reuses
+`ProbabilityModels.bernoulliFamily` and its certified probability masses.
+`crossEntropyLoss` reuses the common negative log-likelihood, and its expansion
+theorem gives equation (5.20). Strictly positive predicted masses supply the
+likelihood-equivalence hypotheses. The probability threshold rule, selecting
+label 1 above one half and label 0 otherwise, is proved to select a mode.
+
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed
 perturbations, for future training examples.

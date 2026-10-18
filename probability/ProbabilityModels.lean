@@ -5,6 +5,7 @@ public import ProbabilityModels.Expectation
 public import ProbabilityModels.Variance
 public import ProbabilityModels.StandardDeviation
 public import ProbabilityModels.Gaussian
+public import ProbabilityModels.Bernoulli
 public import ProbabilityModels.ConditionalProbability
 public import ProbabilityModels.ConditionalDistribution
 public import ProbabilityModels.ConditionalExpectation
@@ -22,10 +23,11 @@ public import ProbabilityModels.Examples.Independence
 
 Reusable probability interfaces built on Mathlib, organized by concept.
 
-The modules expose expectation, variance, standard deviation, Gaussian
+The modules expose expectation, variance, standard deviation, Gaussian and Bernoulli
 distributions, conditioning, densities, and independence. `Family` connects
 parameterized distributions to predictors, and `Gaussian` adapts Mathlib's
-real Gaussian measures to that interface.
+real Gaussian measures to that interface. `Bernoulli` supplies binary labels
+with a certified mass function relative to counting measure.
 
 Each topic can also be imported individually, for example
 `ProbabilityModels.Expectation` or `ProbabilityModels.Gaussian`.

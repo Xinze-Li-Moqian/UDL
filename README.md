@@ -484,5 +484,9 @@ the shared model interface from distribution-specific implementations.
 Section 5.3.4 adds input-dependent Gaussian variance in its `Heteroscedastic/`
 subdirectory, with the loss expansion and mode prediction. The earlier
 constant-variance models specialize this general constructor.
+Section 5.4 is implemented in `LossFunctions/Examples/BinaryClassification/`:
+sigmoid probabilities, the binary cross-entropy identity, maximum-likelihood
+equivalence, and a mode-based threshold prediction. Its probability masses reuse the same density
+interface as the regression models, with counting measure as reference.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.

@@ -14,6 +14,7 @@ Each concept has its own file in `ProbabilityModels/`:
 | `Variance.lean` | Centered and second-moment formulas, affine transformations, and zero variance |
 | `StandardDeviation.lean` | Square-root definition, affine transformations, and zero standard deviation |
 | `Gaussian.lean` | Gaussian families, a positive-variance density adapter, its maximum at the mean, and standard deviation |
+| `Bernoulli.lean` | Bernoulli families on binary labels, certified masses, and the negative log-mass expansion |
 | `ConditionalProbability.lean` | Event conditioning, normalization, ratio and Bayes rules |
 | `ConditionalDistribution.lean` | Predictive kernels and the links between conditional laws and expectations |
 | `ConditionalExpectation.lean` | Defining integral identity, measurability, averaging, and the tower property |
@@ -31,6 +32,13 @@ The files reuse Mathlib's probability theory and add interfaces for models.
 `Gaussian.lean` provides `gaussianFamily : Family (ℝ × ℝ≥0) ℝ`. Its two
 parameters are the mean and variance. Positive variance is required when
 using the Gaussian density; zero variance gives a Dirac mass.
+
+`Bernoulli.lean` provides `bernoulliFamily : Family unitInterval (Fin 2)`.
+The parameter is the probability of label 1, with complementary probability
+for label 0. `bernoulliMass` certifies these masses as a density relative to
+counting measure, and `neg_log_bernoulliMass` supplies the binary cross-entropy
+identity. Endpoint parameters are allowed in the family; positive masses for
+both labels require an interior parameter.
 
 Expectation and variance retain Mathlib's integrability assumptions and
 totalization conventions. In particular, use `MemLp X 2 μ` for a finite second
