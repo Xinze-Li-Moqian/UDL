@@ -96,6 +96,8 @@ The files separate definitions, proofs, and demonstrations:
 neural-networks/
 ├── Bias.lean
 ├── ActivationFunction.lean
+├── ActivationFunction/
+│   └── Sigmoid.lean             # Logistic sigmoid and its probability range
 ├── ShallowNetwork.lean          # Library entry point
 ├── ShallowNetwork/
 │   ├── Model.lean               # Shallow network definitions
@@ -130,6 +132,12 @@ for negative inputs. Call `relu z` for zero bias, or `relu z bias` to add a bias
 before rectifying; `relu z (bias := bias)` is the equivalent named form.
 `relu_eq_max` proves that `relu z = max z 0` over any linearly ordered scalar
 type; the proofs about ReLU networks use this form.
+
+`neural-networks/ActivationFunction/Sigmoid.lean` exposes Mathlib's real sigmoid
+as `NeuralNetworks.sigmoid : ActivationFunction ℝ`. It proves the formula
+`sig(z) = 1 / (1 + exp(−z))`, strict range `(0, 1)`, value `sig(0) = 1/2`,
+monotonicity, and the correspondence between score zero and probability one
+half. The Section 5.4 binary-classification example uses this shared interface.
 
 `neural-networks/Bias.lean` defines `addBias bias value = bias + value`, the
 constant offset represented by the orange edges in the network diagram.

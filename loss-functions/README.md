@@ -24,6 +24,15 @@ error for `ℓ`; negative log-likelihood supplies `ℓ(θ, y) = -log p(y | θ)`.
 `negativeLogLikelihood_eq_neg_logLikelihood` verifies that this sum equals
 minus the log-likelihood from Section 5.1.3.
 
+[`BinaryCrossEntropy.lean`](LossFunctions/BinaryCrossEntropy.lean) defines the
+reusable single-example loss `binaryCrossEntropy p y` as the negative log
+Bernoulli mass. Its formula theorem gives
+`ℓ(p, y) = −(1 − y) log(1 − p) − y log p`, and simplification rules handle
+labels 0 and 1. The usual finite interpretation assumes `0 < p < 1`;
+endpoint behavior follows the totalized real logarithm used by the shared
+negative log-likelihood. The classification example sums this loss using
+`empiricalLoss` and proves agreement with the common negative log-likelihood.
+
 `EmpiricalLoss.lean` also enables the book's `L[φ]` notation with
 `open scoped LossFunctions`. Here `L` is the actual loss function
 bound in the surrounding expression; `L[φ]` means `L φ`.
@@ -182,7 +191,8 @@ See [the directory guide](LossFunctions/UnivariateRegression/Heteroscedastic/REA
 Section 5.4 is an application of the shared interfaces in
 [`Examples/BinaryClassification/`](LossFunctions/Examples/BinaryClassification/README.md),
 imported through `LossFunctions.Examples.BinaryClassification`. Labels use `Fin 2`.
-Its Bernoulli model applies Mathlib's sigmoid to a real model score and reuses
+Its Bernoulli model uses the shared `ActivationFunction.Sigmoid` interface
+(backed by Mathlib's sigmoid) on a real model score and reuses
 `ProbabilityModels.bernoulliFamily` and its certified probability masses.
 `crossEntropyLoss` reuses the common negative log-likelihood, and its expansion
 theorem gives equation (5.20). Strictly positive predicted masses supply the

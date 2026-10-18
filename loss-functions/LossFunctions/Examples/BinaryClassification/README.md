@@ -13,12 +13,15 @@ distribution lives in `ProbabilityModels.Bernoulli` and reuses Mathlib's
 Bernoulli measure. Its mass function is a density relative to counting measure,
 so the same likelihood interface works for these discrete labels.
 
-- `predictedProbability` uses Mathlib's sigmoid to produce the probability
-  of label 1; label 0 has probability `1 - λ`.
+- `predictedProbability` produces the probability of label 1; label 0 has
+  probability `1 - λ`. `ActivationFunction.Sigmoid` exposes the underlying
+  Mathlib function as the shared `NeuralNetworks.sigmoid` activation.
 - `predictiveDistribution` returns the full two-label probability distribution.
 - `predictiveMass_eq` proves the substituted probability formula (5.19).
-- `crossEntropyLoss` reuses `negativeLogLikelihood`; `crossEntropyLoss_eq`
-  proves the binary cross-entropy expansion (5.20):
+- `crossEntropyLoss` uses `empiricalLoss binaryCrossEntropy` to sum the
+  reusable single-example loss. `crossEntropyLoss_eq_negativeLogLikelihood`
+  proves it is the shared negative log-likelihood, and `crossEntropyLoss_eq`
+  proves the expansion (5.20):
 
       L[φ] = ∑ᵢ [−(1 − yᵢ) log(1 − λᵢ) − yᵢ log λᵢ],
       λᵢ = sig(f(xᵢ, φ)).
@@ -27,6 +30,8 @@ so the same likelihood interface works for these discrete labels.
   between maximum likelihood and minimizing this loss.
 - `predictLabel` selects 1 if `λ > 1/2` and 0 otherwise;
   `predictLabel_isModePrediction` proves this is a mode, including the tie case.
+  `predictLabel_eq_score_rule` proves this is equivalent to selecting 1 for
+  a positive raw score and 0 otherwise.
 
 For example, with the existing probability notation:
 

@@ -1,6 +1,7 @@
 module
 
 public import LossFunctions.EmpiricalLoss
+public import LossFunctions.BinaryCrossEntropy
 public import LossFunctions.PredictiveDistribution
 public import LossFunctions.MaximumLikelihood
 public import LossFunctions.LogLikelihood

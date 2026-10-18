@@ -1,9 +1,10 @@
 module
 
 public import ProbabilityModels.Bernoulli
+public import LossFunctions.BinaryCrossEntropy
 public import LossFunctions.NegativeLogLikelihood
 public import LossFunctions.Inference
-public import Mathlib.Analysis.SpecialFunctions.Sigmoid
+public import ActivationFunction.Sigmoid
 
 /-!
 # Example: Bernoulli binary classification
@@ -33,7 +34,8 @@ variable {X Parameters : Type*} {I : ℕ}
 
     λ(x, φ) = sig(f(x, φ)),    0 < λ(x, φ) < 1.
 
-Mathlib supplies both sigmoid and its range proof.
+`ActivationFunction.Sigmoid` exposes Mathlib's sigmoid as a shared activation.
+Mathlib's unit-interval version packages the same value with its range proof.
 -/
 noncomputable def predictedProbability (f : X → Parameters → ℝ)
     (x : X) (φ : Parameters) : unitInterval :=
@@ -41,7 +43,7 @@ noncomputable def predictedProbability (f : X → Parameters → ℝ)
 
 @[simp] theorem coe_predictedProbability (f : X → Parameters → ℝ)
     (x : X) (φ : Parameters) :
-    (predictedProbability f x φ : ℝ) = Real.sigmoid (f x φ) := rfl
+    (predictedProbability f x φ : ℝ) = NeuralNetworks.sigmoid (f x φ) := rfl
 
 /-- Return the full distribution over the two labels.
 
@@ -58,7 +60,8 @@ noncomputable def predictiveDistribution (f : X → Parameters → ℝ)
 theorem predictiveMass_eq (f : X → Parameters → ℝ)
     (x : X) (φ : Parameters) (y : Fin 2) :
     Pr[y | predictedProbability f x φ; bernoulliMass] =
-      (1 - Real.sigmoid (f x φ)) ^ (1 - y.val) * Real.sigmoid (f x φ) ^ y.val :=
+      (1 - NeuralNetworks.sigmoid (f x φ)) ^ (1 - y.val) *
+        NeuralNetworks.sigmoid (f x φ) ^ y.val :=
   bernoulliMass_eq (predictedProbability f x φ) y
 
 /-- Both labels have strictly positive probability for every finite real score. -/
@@ -66,15 +69,21 @@ theorem predictiveMass_pos (f : X → Parameters → ℝ)
     (x : X) (φ : Parameters) (y : Fin 2) :
     0 < Pr[y | predictedProbability f x φ; bernoulliMass] :=
   bernoulliMass_pos (predictedProbability f x φ)
-    (Real.sigmoid_pos _) (Real.sigmoid_lt_one _) y
+    (NeuralNetworks.sigmoid_mem_Ioo _).1 (NeuralNetworks.sigmoid_mem_Ioo _).2 y
 
-/-- Construct binary cross-entropy through the shared negative log-likelihood.
+/-- Sum the reusable single-example binary cross-entropy over the training data.
 
     L[φ] = −∑ᵢ log p(yᵢ | λ(xᵢ, φ)).
 -/
 noncomputable def crossEntropyLoss (f : X → Parameters → ℝ)
     (x : Fin I → X) (y : Fin I → Fin 2) : LossFunction ℝ Parameters :=
-  negativeLogLikelihood bernoulliMass (predictedProbability f) x y
+  empiricalLoss binaryCrossEntropy (predictedProbability f) x y
+
+/-- The empirical binary cross-entropy is the existing Bernoulli negative log-likelihood. -/
+theorem crossEntropyLoss_eq_negativeLogLikelihood (f : X → Parameters → ℝ)
+    (x : Fin I → X) (y : Fin I → Fin 2) :
+    crossEntropyLoss f x y =
+      negativeLogLikelihood bernoulliMass (predictedProbability f) x y := rfl
 
 /-- Equation (5.20): the Bernoulli negative log-likelihood is binary cross-entropy.
 
@@ -85,8 +94,8 @@ theorem crossEntropyLoss_eq (f : X → Parameters → ℝ)
     (x : Fin I → X) (y : Fin I → Fin 2) (φ : Parameters) :
     let L := crossEntropyLoss f x y
     L[φ] = ∑ i : Fin I,
-      (-(1 - ((y i).val : ℝ)) * Real.log (1 - Real.sigmoid (f (x i) φ)) -
-        ((y i).val : ℝ) * Real.log (Real.sigmoid (f (x i) φ))) := by
+      (-(1 - ((y i).val : ℝ)) * Real.log (1 - NeuralNetworks.sigmoid (f (x i) φ)) -
+        ((y i).val : ℝ) * Real.log (NeuralNetworks.sigmoid (f (x i) φ))) := by
   change (∑ i : Fin I, -Real.log
     (bernoulliMass (predictedProbability f (x i) φ) (y i))) = _
   simp only [neg_log_bernoulliMass, coe_predictedProbability]
@@ -109,6 +118,16 @@ noncomputable def predictLabel (f : X → Parameters → ℝ)
     (x : X) («φ̂» : Parameters) : Fin 2 := by
   classical
   exact if (1 / 2 : ℝ) < (predictedProbability f x «φ̂» : ℝ) then 1 else 0
+
+/-- Thresholding the sigmoid probability at one half is equivalent to testing the score.
+
+    ŷ = 1 if f(x, φ̂) > 0, and ŷ = 0 otherwise.
+-/
+theorem predictLabel_eq_score_rule (f : X → Parameters → ℝ)
+    (x : X) («φ̂» : Parameters) :
+    predictLabel f x «φ̂» = (if 0 < f x «φ̂» then (1 : Fin 2) else 0) := by
+  classical
+  simp only [predictLabel, coe_predictedProbability, NeuralNetworks.half_lt_sigmoid_iff]
 
 /-- The threshold rule selects a mode of the predicted Bernoulli distribution. -/
 theorem predictLabel_isModePrediction (f : X → Parameters → ℝ)

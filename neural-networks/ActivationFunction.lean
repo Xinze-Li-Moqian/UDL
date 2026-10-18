@@ -13,6 +13,8 @@ activation `a[z]`. ReLU is one choice: negative inputs become zero and
 nonnegative inputs are preserved. The `relu` interface accepts an optional
 bias: `relu z` uses zero, while `relu z bias` adds that bias before rectifying.
 Passing `relu` as an `ActivationFunction` uses the default zero bias.
+Import `ActivationFunction.Sigmoid` for the real logistic sigmoid and its
+probability-range and score-threshold properties.
 -/
 
 @[expose] public section
