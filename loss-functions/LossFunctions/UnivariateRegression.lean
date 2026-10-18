@@ -1,6 +1,7 @@
 module
 
 public import LossFunctions.UnivariateRegression.Model
+public import LossFunctions.UnivariateRegression.Heteroscedastic
 public import LossFunctions.UnivariateRegression.Gaussian
 
 /-!

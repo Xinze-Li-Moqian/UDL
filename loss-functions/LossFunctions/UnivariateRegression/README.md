@@ -13,6 +13,10 @@ the Gaussian model, rather than a requirement of the shared interface.
   adds `gaussianModelWithLearnedVariance`, whose parameter pair includes one
   shared positive variance, with a joint loss and an optimality criterion.
 - `../UnivariateRegression.lean` imports the interface and implementations.
+- `Heteroscedastic/` contains distribution implementations that allow
+  input-dependent variance, using the same `Model` interface. Its Gaussian
+  constructor is also used by the constant-variance constructors above.
+  See [Heteroscedastic/README.md](Heteroscedastic/README.md) for Section 5.3.4.
 
 All implementations use the same prediction and loss operations:
 

@@ -168,7 +168,16 @@ operation, and `IsGaussianJointEstimator` states joint optimality. Its exact
 loss expansion retains both variance-dependent terms. This defines the fitting
 criterion; it does not compute an estimate or assert that a minimizer exists.
 `learnedVariance_mean_isModePrediction` proves that the predicted mean is still
-a mode with this parameterization. Heteroscedastic regression (5.3.4) is next.
+a mode with this parameterization.
+
+Section 5.3.4 is implemented in
+[`Heteroscedastic/Gaussian.lean`](LossFunctions/UnivariateRegression/Heteroscedastic/Gaussian.lean),
+under the same univariate interface. Its Gaussian constructor accepts mean
+and positive-variance predictors depending on both input and model parameters.
+The previous constant-variance constructors specialize this more general one.
+The module proves the loss expansion and mode inference, and implements the
+book's squared second output with an explicit nonzero-output hypothesis.
+See [the directory guide](LossFunctions/UnivariateRegression/Heteroscedastic/README.md).
 
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed

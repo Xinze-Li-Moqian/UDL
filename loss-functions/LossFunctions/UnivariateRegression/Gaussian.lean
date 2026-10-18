@@ -1,6 +1,7 @@
 module
 
 public import LossFunctions.UnivariateRegression.Model
+public import LossFunctions.UnivariateRegression.Heteroscedastic.Gaussian
 public import LossFunctions.Inference
 public import ProbabilityModels.Gaussian
 
@@ -42,14 +43,12 @@ def gaussianParameters (f : X → Parameters → ℝ) (v : {v : ℝ≥0 // 0 < v
 
     θ(x, φ) = (f(x, φ), v),    Y | x, φ ∼ 𝒩(f(x, φ), v).
 
+This specializes the input-dependent model to a constant variance predictor.
 The distribution family and density are supplied by `ProbabilityModels.Gaussian`.
 -/
 noncomputable def gaussianModel (f : X → Parameters → ℝ) (v : {v : ℝ≥0 // 0 < v}) :
-    Model X Parameters PositiveGaussianParameters where
-  family := positiveGaussianFamily
-  referenceMeasure := volume
-  density := positiveGaussianDensity
-  predictParameters := gaussianParameters f v
+    Model X Parameters PositiveGaussianParameters :=
+  Heteroscedastic.gaussianModel f (fun _ _ => v)
 
 /-- Equation (5.8): substitute the predicted mean into the Gaussian density.
 
@@ -142,11 +141,9 @@ abbrev GaussianFitParameters (Parameters : Type*) :=
 The variance can change during fitting but is shared by every input.
 -/
 noncomputable def gaussianModelWithLearnedVariance (f : X → Parameters → ℝ) :
-    Model X (GaussianFitParameters Parameters) PositiveGaussianParameters where
-  family := positiveGaussianFamily
-  referenceMeasure := volume
-  density := positiveGaussianDensity
-  predictParameters x ψ := (f x ψ.1, ψ.2)
+    Model X (GaussianFitParameters Parameters) PositiveGaussianParameters :=
+  Heteroscedastic.gaussianModel
+    (fun x ψ => f x ψ.1) (fun _ ψ => ψ.2)
 
 /-- Equation (5.13): reuse the shared loss with both `φ` and `v` as arguments.
 

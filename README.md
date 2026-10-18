@@ -481,5 +481,8 @@ Section 5.3.3 adds a joint objective for the model parameters and a shared
 positive variance, reusing the same Gaussian family and loss construction.
 The `loss-functions/LossFunctions/UnivariateRegression/` directory separates
 the shared model interface from distribution-specific implementations.
+Section 5.3.4 adds input-dependent Gaussian variance in its `Heteroscedastic/`
+subdirectory, with the loss expansion and mode prediction. The earlier
+constant-variance models specialize this general constructor.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.
