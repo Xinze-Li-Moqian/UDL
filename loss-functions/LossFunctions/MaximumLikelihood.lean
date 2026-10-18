@@ -64,4 +64,11 @@ theorem likelihood_nonneg (p : family.Density ν) (f : X → Parameters → Θ)
   intro i _
   exact p.nonneg (f (x i) φ) (y i)
 
+/-- Strictly positive densities at every observation give a positive likelihood. -/
+theorem likelihood_pos (p : family.Density ν) (f : X → Parameters → Θ)
+    (x : Fin I → X) (y : Fin I → Y) (φ : Parameters)
+    (hpos : ∀ i, 0 < Pr[y i | f (x i) φ; p]) :
+    0 < likelihood p f x y φ :=
+  Finset.prod_pos (fun i _ => hpos i)
+
 end LossFunctions

@@ -1,5 +1,33 @@
 # Loss functions
 
+[`EmpiricalLoss.lean`](LossFunctions/EmpiricalLoss.lean) defines the shared type:
+
+```lean
+abbrev LossFunction (Scalar : Type u) (Parameters : Type v) := Parameters → Scalar
+```
+
+A concrete loss fixes the model and data, then maps parameters to a scalar
+value to minimize. Chapter 2's `SupervisedLearning.LossFunction` is an alias
+of this type, so least squares and negative log-likelihood share the same
+interface. Optimization can accept any such function.
+
+The same module defines `empiricalLoss ℓ f x y`, which constructs
+`L[φ] = ∑ᵢ ℓ(f(xᵢ, φ), yᵢ)` from a single-example loss, a model, and paired
+training data. The prediction and target types may differ: a prediction can
+be a distribution parameter `θ`, while the target is an observed output `y`.
+This constructor sums the terms without dividing by the sample count.
+Its definition uses `∑ i : Fin I, ℓ (f (x i) φ) (y i)` directly. The scalar
+type has an `AddCommMonoid` structure, as both `ℝ` and `ℚ` do.
+
+Both existing losses now use this construction. Chapter 2 supplies squared
+error for `ℓ`; negative log-likelihood supplies `ℓ(θ, y) = -log p(y | θ)`.
+`negativeLogLikelihood_eq_neg_logLikelihood` verifies that this sum equals
+minus the log-likelihood from Section 5.1.3.
+
+`EmpiricalLoss.lean` also enables the book's `L[φ]` notation with
+`open scoped LossFunctions`. Here `L` is the actual loss function
+bound in the surrounding expression; `L[φ]` means `L φ`.
+
 Section 5.1.1 defines
 [`networkPredictiveDistribution`](LossFunctions/PredictiveDistribution.lean).
 It composes the existing network with a conversion to distribution parameters
@@ -47,9 +75,70 @@ in equation (5.2); independence is not inferred from sharing a family.
 The maximum-likelihood criterion specifies an optimum without assuming one
 exists or providing a solver. `likelihood_nonneg` proves nonnegativity.
 
+The event-probability factorization behind equation (5.2) is provided by
+`ProbabilityModels.independent_probability_forall` in
+[`ProbabilityModels/Independence.lean`](../probability/ProbabilityModels/Independence.lean).
+It is a general probability theorem, reusable for a joint output model after
+fixing inputs and parameters. A joint-density formula is a later step.
+
+Sections 5.1.3 and 5.1.4 have separate files alongside `MaximumLikelihood.lean`:
+
+- [`LogLikelihood.lean`](LossFunctions/LogLikelihood.lean) defines
+  `logLikelihood` as a sum of log densities and its maximum-likelihood criterion.
+  It proves that the sum is the log of the likelihood, that candidate ordering
+  is preserved, and that the two criteria have the same maximizers.
+- [`NegativeLogLikelihood.lean`](LossFunctions/NegativeLogLikelihood.lean)
+  defines `negativeLogLikelihood` and its minimization criterion. It proves
+  that negation turns log-likelihood maximization into loss minimization,
+  then connects this criterion to the original maximum likelihood.
+
+The logarithmic equivalences assume strictly positive densities at every
+observation for the compared candidates (all candidates for global optimality).
+The definitions use `Real.log`, whose totalized value at zero is `0`; these
+results do not cover the extended-log treatment of zero density. Negation alone
+needs no positivity assumption. None of these equivalences assumes an optimum
+exists or that it is unique.
+
+The minimization criterion reuses `Optimization.IsArgmin` through set notation:
+
+```lean
+open scoped LossFunctions Optimization
+
+let L : LossFunction ℝ Parameters := negativeLogLikelihood p f x y
+«φ̂» ∈ argmin φ, L[φ]
+```
+
+`negativeLogLikelihood_apply` states the book's formula directly as
+`L[φ] = -∑ i : Fin I, Real.log Pr[y i | f (x i) φ; p]`.
+
+Section 5.1.5 adds [`Inference.lean`](LossFunctions/Inference.lean).
+`IsModePrediction` fixes the input and model parameters, then optimizes the
+output rather than the parameters:
+
+```lean
+ŷ ∈ argmax y, Pr[y | f x «φ̂»; p]
+```
+
+This describes a mode of the chosen predictive density, without asserting
+existence or uniqueness for arbitrary families. `gaussian_mean_isModePrediction`
+proves that the predicted mean satisfies this criterion for a positive-variance
+Gaussian. The underlying density inequality, `positiveGaussianDensity_le_mean`,
+lives in `ProbabilityModels.Gaussian`.
+
+Section 5.2 assembles these existing definitions into the book's recipe:
+
+1. Choose a `Family` and its `Family.Density`.
+2. Use the network and `toParameters` to predict distribution parameters.
+3. Specify fitted parameters with `IsNegativeLogLikelihoodMinimizer`.
+4. For a new input, return the predictive distribution or an output satisfying
+   `IsModePrediction`.
+
+Step 3 specifies the training objective; an algorithm for fitting general
+deep networks is still to be added.
+
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed
 perturbations, for future training examples.
 
-Log-likelihoods and loss functions are the next steps; deep-network training
-examples will follow once general back-propagation is available.
+Deep-network training examples will follow once general back-propagation
+is available.

@@ -61,7 +61,9 @@ executable experiments in `Examples.lean`. The model-comparison proof and the
 training experiment share the same three-point dataset.
 
 `supervised-learning/SupervisedLearning.lean` contains the shared input, output,
-training-dataset, and loss-function types. Models are grouped by direction:
+and training-dataset types. It re-exports the loss-function type from
+`loss-functions/LossFunctions/EmpiricalLoss.lean`, shared by least squares and negative
+log-likelihood. Models are grouped by direction:
 
 - `Discriminative/`: `Model.lean` defines `y = f[x, φ]` and direct inference;
   `LinearRegression.lean` defines its linear model and loss;
@@ -467,5 +469,10 @@ the existing network computes distribution parameters, then a chosen family
 supplies the predicted output distribution.
 Section 5.1.2 defines the product likelihood and the maximum-likelihood
 optimality condition, using the chosen densities from `ProbabilityModels`.
+Sections 5.1.3–5.1.4 define log-likelihood and negative log-likelihood in
+separate modules, proving equivalence of their optimality criteria with
+maximum likelihood under strictly positive observed densities.
+Section 5.1.5 defines mode-based point predictions with fixed model parameters
+and proves that the predicted Gaussian mean satisfies this criterion.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.

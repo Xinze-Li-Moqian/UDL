@@ -1,6 +1,7 @@
 module
 
 public import Generative.Model
+public import LossFunctions.EmpiricalLoss
 public import Argmin
 public import Mathlib.Algebra.Field.Defs
 
@@ -14,6 +15,8 @@ errors in `x`. Once fitted, a nonzero slope permits inference of `y` from `x`.
 @[expose] public section
 
 namespace SupervisedLearning.Generative.LinearRegression
+
+open scoped LossFunctions Optimization
 
 /-- The parameters of `x = φ₀ + φ₁ * y`, fitted for the generative direction. -/
 structure Parameters (Scalar : Type) where
@@ -29,19 +32,19 @@ def linearModel [Add Scalar] [Mul Scalar] : Model Scalar (Parameters Scalar) 1 1
   fun y φ => #v[φ.φ₀ + φ.φ₁ * y[0]]
 
 /-- The loss `L[φ] = Σᵢ (g[yᵢ, φ] - xᵢ)²`, using the original training pairs. -/
-def leastSquaresLoss [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+def leastSquaresLoss [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
     (data : TrainingDataset Scalar 1 1 I) : LossFunction Scalar (Parameters Scalar) :=
-  let g := linearModel (Scalar := Scalar)
-  fun φ =>
-    (List.ofFn fun i : Fin I =>
-      let deviation := (g (data.y i) φ)[0] - (data.x i)[0]
-      deviation * deviation).sum
+  LossFunctions.empiricalLoss
+    (fun prediction target =>
+      let deviation := prediction[0] - target[0]
+      deviation * deviation)
+    (linearModel (Scalar := Scalar)) data.y data.x
 
 /-- The generative training objective: minimize the loss over the parameters. -/
-def IsLeastSquaresMinimizer [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+def IsLeastSquaresMinimizer [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
     [LE Scalar] (data : TrainingDataset Scalar 1 1 I) (φBest : Parameters Scalar) : Prop :=
   let L := leastSquaresLoss data
-  Optimization.IsArgmin L φBest
+  φBest ∈ argmin φ, L[φ]
 
 /-- Inference by inversion: `y = g⁻¹[x, φ] = (x - φ₀) / φ₁`.
 The scalar type is a field (e.g. ℝ or ℚ), and callers must supply a proof that

@@ -52,7 +52,8 @@ theorem leastSquaresGradient_intercept_hasDerivAt
     have h := ((hasDerivAt_id φ.φ₀).add_const (φ.φ₁ * (data.x i)[0])).sub_const
       (data.y i)[0]
     exact (h.mul h).congr_deriv (by dsimp; ring)
-  simpa only [leastSquaresLoss, leastSquaresGradient, linearModel, Vector.getElem_singleton,
+  simpa only [leastSquaresLoss, LossFunctions.empiricalLoss,
+    leastSquaresGradient, linearModel, Vector.getElem_singleton,
     Nat.cast_ofNat, List.sum_ofFn, Finset.mul_sum] using
     (HasDerivAt.fun_sum (u := Finset.univ) (fun i _ => hTerm i))
 
@@ -72,7 +73,8 @@ theorem leastSquaresGradient_slope_hasDerivAt
     have h := (((hasDerivAt_id φ.φ₁).mul_const (data.x i)[0]).const_add
       φ.φ₀).sub_const (data.y i)[0]
     exact (h.mul h).congr_deriv (by dsimp; ring)
-  simpa only [leastSquaresLoss, leastSquaresGradient, linearModel, Vector.getElem_singleton,
+  simpa only [leastSquaresLoss, LossFunctions.empiricalLoss,
+    leastSquaresGradient, linearModel, Vector.getElem_singleton,
     Nat.cast_ofNat, List.sum_ofFn, Finset.mul_sum] using
     (HasDerivAt.fun_sum (u := Finset.univ) (fun i _ => hTerm i))
 
@@ -115,7 +117,8 @@ theorem leastSquaresGradient_intercept_hasDerivAt
     have h := ((hasDerivAt_id φ.φ₀).add_const (φ.φ₁ * (data.y i)[0])).sub_const
       (data.x i)[0]
     exact (h.mul h).congr_deriv (by dsimp; ring)
-  simpa only [leastSquaresLoss, leastSquaresGradient, linearModel, Vector.getElem_singleton,
+  simpa only [leastSquaresLoss, LossFunctions.empiricalLoss,
+    leastSquaresGradient, linearModel, Vector.getElem_singleton,
     Nat.cast_ofNat, List.sum_ofFn, Finset.mul_sum] using
     (HasDerivAt.fun_sum (u := Finset.univ) (fun i _ => hTerm i))
 
@@ -135,7 +138,8 @@ theorem leastSquaresGradient_slope_hasDerivAt
     have h := (((hasDerivAt_id φ.φ₁).mul_const (data.y i)[0]).const_add
       φ.φ₀).sub_const (data.x i)[0]
     exact (h.mul h).congr_deriv (by dsimp; ring)
-  simpa only [leastSquaresLoss, leastSquaresGradient, linearModel, Vector.getElem_singleton,
+  simpa only [leastSquaresLoss, LossFunctions.empiricalLoss,
+    leastSquaresGradient, linearModel, Vector.getElem_singleton,
     Nat.cast_ofNat, List.sum_ofFn, Finset.mul_sum] using
     (HasDerivAt.fun_sum (u := Finset.univ) (fun i _ => hTerm i))
 

@@ -110,7 +110,8 @@ theorem leastSquaresLoss_eq_stationary_add
         intro i _
         ring
       _ = 0 := by rw [h₀, h₁]; ring
-  simp only [leastSquaresLoss, linearModel, Vector.getElem_singleton, List.sum_ofFn]
+  simp only [leastSquaresLoss, LossFunctions.empiricalLoss,
+    linearModel, Vector.getElem_singleton]
   change (∑ i, (ψ.φ₀ + ψ.φ₁ * (data.x i)[0] - (data.y i)[0]) *
       (ψ.φ₀ + ψ.φ₁ * (data.x i)[0] - (data.y i)[0])) =
     (∑ i, r i * r i) + ∑ i, (d₀ + d₁ * (data.x i)[0]) ^ 2
@@ -128,6 +129,7 @@ theorem isLeastSquaresMinimizer_of_stationary
     (data : TrainingDataset ℝ 1 1 I) (φ : Parameters ℝ)
     (hφ : IsLeastSquaresStationary data φ) : IsLeastSquaresMinimizer data φ := by
   intro ψ
+  change leastSquaresLoss data φ ≤ leastSquaresLoss data ψ
   rw [leastSquaresLoss_eq_stationary_add data φ ψ hφ]
   exact le_add_of_nonneg_right (Finset.sum_nonneg fun i _ => sq_nonneg _)
 

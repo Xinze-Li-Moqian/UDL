@@ -1,5 +1,9 @@
 module
 
+public import LossFunctions.EmpiricalLoss
 public import LossFunctions.PredictiveDistribution
 public import LossFunctions.MaximumLikelihood
+public import LossFunctions.LogLikelihood
+public import LossFunctions.NegativeLogLikelihood
+public import LossFunctions.Inference
 public import LossFunctions.Examples.Data.ToyRegression

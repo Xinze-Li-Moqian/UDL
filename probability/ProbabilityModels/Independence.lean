@@ -56,6 +56,15 @@ theorem independent_probability_iInter (h : iIndepFun Z P) (s : Finset ι)
     P (⋂ i ∈ s, Z i ⁻¹' events i) = ∏ i ∈ s, P (Z i ⁻¹' events i) :=
   h.measure_inter_preimage_eq_mul s hEvents
 
+/-- For a finite independent family, the probability that every variable lies
+in its specified measurable set is the product of the individual probabilities.
+Use `ι = Fin I` for a collection of `I` observations. -/
+theorem independent_probability_forall [Fintype ι] (h : iIndepFun Z P)
+    (events : ∀ i, Set (Output i)) (hEvents : ∀ i, MeasurableSet (events i)) :
+    P {ω | ∀ i, Z i ω ∈ events i} = ∏ i, P {ω | Z i ω ∈ events i} := by
+  simpa [Set.preimage, Set.ofPred_forall] using
+    independent_probability_iInter h Finset.univ events (fun i _ => hEvents i)
+
 /-- A finite family is mutually independent exactly when its joint law factors. -/
 theorem independent_iff_jointLaw_eq_pi [Fintype ι] [IsProbabilityMeasure P]
     (hZ : ∀ i, AEMeasurable (Z i) P) :

@@ -13,7 +13,7 @@ Each concept has its own file in `ProbabilityModels/`:
 | `Expectation.lean` | Expectation notation, linearity, affine transformations, and order properties |
 | `Variance.lean` | Centered and second-moment formulas, affine transformations, and zero variance |
 | `StandardDeviation.lean` | Square-root definition, affine transformations, and zero standard deviation |
-| `Gaussian.lean` | Gaussian families, a positive-variance density adapter, and standard deviation |
+| `Gaussian.lean` | Gaussian families, a positive-variance density adapter, its maximum at the mean, and standard deviation |
 | `ConditionalProbability.lean` | Event conditioning, normalization, ratio and Bayes rules |
 | `ConditionalDistribution.lean` | Predictive kernels and the links between conditional laws and expectations |
 | `ConditionalExpectation.lean` | Defining integral identity, measurability, averaging, and the tower property |
@@ -100,6 +100,9 @@ these assumptions to the operations used in probability models:
 
 - `independent_probability_inter` and `independent_probability_iInter`
   factor probabilities of simultaneous output events.
+- `independent_probability_forall` writes the finite-family rule as
+  `P {ω | ∀ i, Z i ω ∈ events i} = ∏ i, P {ω | Z i ω ∈ events i}`.
+  Taking the index type to be `Fin I` covers `I` observations.
 - `independent_iff_jointLaw_eq_prod` and `independent_iff_jointLaw_eq_pi`
   characterize independence by a joint law equal to the product of its
   marginal laws, assuming measurable variables under a probability measure.
@@ -179,7 +182,8 @@ probabilities, rather than interpreted as singleton probabilities.
 `PositiveGaussianParameters` is a mean paired with a strictly positive
 variance. `positiveGaussianFamily` restricts the existing Gaussian family to
 these parameters, and `positiveGaussianDensity` certifies its usual density
-relative to Lebesgue measure. The density is strictly positive everywhere.
+relative to Lebesgue measure. The density is strictly positive everywhere;
+`positiveGaussianDensity_le_mean` proves that it attains its maximum at the mean.
 The original `gaussianFamily` still includes variance zero, which gives a
 Dirac measure and has no Lebesgue density.
 

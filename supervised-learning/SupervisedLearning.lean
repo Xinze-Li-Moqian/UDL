@@ -1,5 +1,7 @@
 module
 
+public import LossFunctions.EmpiricalLoss
+
 /-!
 # Supervised learning
 
@@ -9,7 +11,7 @@ Shared terminology from Simon J. D. Prince, Understanding Deep Learning
 
 `Scalar` is the type of numeric values (typically real numbers).
 `Parameters` is the type of model parameters `φ`.
-Both are left abstract so these definitions use only Lean's core library.
+Both are left abstract; the shared loss construction comes from `LossFunctions.EmpiricalLoss`.
 -/
 
 @[expose] public section
@@ -32,10 +34,8 @@ structure TrainingDataset (Scalar : Type) (inputSize outputSize I : Nat) where
 
 variable {Scalar Parameters : Type}
 
-/-- With the model and training dataset fixed, the loss `L[φ]` is a scalar
-that measures mismatch between predictions and training outputs.
-This gives its type; the choice of loss formula is left open. -/
+/-- The shared loss-function type, retained here for Chapter 2 code. -/
 abbrev LossFunction (Scalar Parameters : Type) :=
-  Parameters → Scalar
+  LossFunctions.LossFunction Scalar Parameters
 
 end SupervisedLearning

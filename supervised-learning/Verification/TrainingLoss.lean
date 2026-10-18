@@ -14,7 +14,7 @@ A single-step nonincrease assumption gives a loss bound for any finite training 
 namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
-variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+variable [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
 variable (data : TrainingDataset Scalar 1 1 I)
 
 variable [OfNat Scalar 2] [LE Scalar] [Std.IsPreorder Scalar]

@@ -89,7 +89,7 @@ theorem trainLinearRegression_one_step_loss_le
     (fun i => (data.x i)[0])
     (fun i => φ.φ₀ + φ.φ₁ * (data.x i)[0] - (data.y i)[0])
     stepSize hStepSize (by simpa [leastSquaresInputBound] using hBound)
-  simp only [leastSquaresLoss, List.sum_ofFn]
+  simp only [leastSquaresLoss, LossFunctions.empiricalLoss]
   convert h using 1 <;> apply Finset.sum_congr rfl <;> intro i _
   all_goals
     dsimp [trainLinearRegression, Optimization.gradientDescent,

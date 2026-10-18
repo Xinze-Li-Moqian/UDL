@@ -13,15 +13,15 @@ The least-squares loss agrees with the expanded expression in equation (2.5).
 namespace SupervisedLearning.Discriminative.LinearRegression
 
 variable {Scalar : Type} {I : Nat}
-variable [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+variable [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
 variable (data : TrainingDataset Scalar 1 1 I)
 
 /-- The book's expanded objective, written once for the proofs below. -/
 def expandedLeastSquaresLoss : LossFunction Scalar (Parameters Scalar) :=
   fun φ =>
-    (List.ofFn fun i : Fin I =>
+    ∑ i : Fin I,
       let deviation := φ.φ₀ + φ.φ₁ * (data.x i)[0] - (data.y i)[0]
-      deviation * deviation).sum
+      deviation * deviation
 
 /-- Equation (2.5): the two expressions define the same loss function. -/
 theorem leastSquaresLoss_eq_expanded :

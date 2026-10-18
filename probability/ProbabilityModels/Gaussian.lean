@@ -77,6 +77,17 @@ theorem positiveGaussianDensity_pos (θ : PositiveGaussianParameters) (y : ℝ) 
     0 < positiveGaussianDensity θ y :=
   gaussianPDFReal_pos θ.1 θ.2.1 y (ne_of_gt θ.2.2)
 
+/-- The usual positive-variance Gaussian density attains its maximum at the mean. -/
+theorem positiveGaussianDensity_le_mean (θ : PositiveGaussianParameters) (y : ℝ) :
+    positiveGaussianDensity θ y ≤ positiveGaussianDensity θ θ.1 := by
+  rw [positiveGaussianDensity_apply, positiveGaussianDensity_apply]
+  simp only [sub_self, zero_pow (by decide : 2 ≠ 0), neg_zero, zero_div,
+    Real.exp_zero, mul_one]
+  apply mul_le_of_le_one_right (inv_nonneg.mpr (Real.sqrt_nonneg _))
+  apply Real.exp_le_one_iff.mpr
+  exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (sq_nonneg _))
+    (mul_nonneg (by norm_num) θ.2.1.coe_nonneg)
+
 /-- A Gaussian with variance `v` has standard deviation `√v`. -/
 @[simp] theorem standardDeviation_gaussianReal (m : ℝ) (v : ℝ≥0) :
     standardDeviation id (gaussianReal m v) = Real.sqrt (v : ℝ) := by

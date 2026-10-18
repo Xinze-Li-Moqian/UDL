@@ -1,6 +1,7 @@
 module
 
 public import Discriminative.Model
+public import LossFunctions.EmpiricalLoss
 public import Argmin
 
 /-!
@@ -15,6 +16,8 @@ The scalar input and output are represented by one-element vectors to fit `Model
 @[expose] public section
 
 namespace SupervisedLearning.Discriminative.LinearRegression
+
+open scoped LossFunctions Optimization
 
 /-- The model parameters `φ = (φ₀, φ₁)`. -/
 structure Parameters (Scalar : Type) where
@@ -35,24 +38,24 @@ def linearModel [Add Scalar] [Mul Scalar] : Model Scalar (Parameters Scalar) 1 1
 `L[φ] = Σᵢ (f[xᵢ, φ] - yᵢ)² = Σᵢ (φ₀ + φ₁ * xᵢ - yᵢ)²`.
 
 Fixing `data` gives a loss function of the parameters `φ`.
-`List.ofFn` forms one squared deviation per training pair, and `.sum` adds them.
+`empiricalLoss` sums the single-example squared errors over the training pairs.
 We write the square as `deviation * deviation`; the sum is not divided by `I`.
 Lean indexes the `I` pairs from `0` to `I - 1` using `Fin I`.
 -/
-def leastSquaresLoss [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+def leastSquaresLoss [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
     (data : TrainingDataset Scalar 1 1 I) : LossFunction Scalar (Parameters Scalar) :=
-  let f := linearModel (Scalar := Scalar)
-  fun φ =>
-    (List.ofFn fun i : Fin I =>
-      let deviation := (f (data.x i) φ)[0] - (data.y i)[0]
-      deviation * deviation).sum
+  LossFunctions.empiricalLoss
+    (fun prediction target =>
+      let deviation := prediction[0] - target[0]
+      deviation * deviation)
+    (linearModel (Scalar := Scalar)) data.x data.y
 
 /-- The training objective in equation (2.6): `φBest` minimizes this loss.
 This is the condition on a least-squares solution, with no claim of existence
 or uniqueness and no choice of training algorithm. -/
-def IsLeastSquaresMinimizer [Zero Scalar] [Add Scalar] [Sub Scalar] [Mul Scalar]
+def IsLeastSquaresMinimizer [AddCommMonoid Scalar] [Sub Scalar] [Mul Scalar]
     [LE Scalar] (data : TrainingDataset Scalar 1 1 I) (φBest : Parameters Scalar) : Prop :=
   let L := leastSquaresLoss data
-  Optimization.IsArgmin L φBest
+  φBest ∈ argmin φ, L[φ]
 
 end SupervisedLearning.Discriminative.LinearRegression
