@@ -37,7 +37,9 @@ lean_lib FittingModels where
     `FittingModels.Examples.LinearRegressionVerification,
     `FittingModels.Examples.FloatLinearRegression,
     `FittingModels.Examples.FloatLinearRegressionVerification,
-    `FittingModels.Examples.Gabor, `FittingModels.Examples.GaborNonconvex]
+    `FittingModels.Examples.Gabor, `FittingModels.Examples.GaborNonconvex,
+    `FittingModels.Examples.SaddlePoint,
+    `FittingModels.Examples.GaborLocalMinimum]
 
 @[default_target]
 lean_lib SupervisedLearning where
