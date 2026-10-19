@@ -9,6 +9,9 @@ try it on data, inspect the results, and use Lean to prove properties of the
 same models and algorithms. The emphasis is on learning through implementation
 and experiment.
 
+I share daily progress and discuss this work in [my Slack workspace](https://join.slack.com/t/moqian/shared_invite/zt-4do3ky6f6-WRFbRrBcoj4gAl4UbaA7ug).
+You are welcome to join, ask questions, and learn along with me.
+
 ## Acknowledgements
 
 Thank you to **Sabatino Costanzo** and **Loren Trigo**, instructors of
