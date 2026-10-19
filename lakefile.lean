@@ -1,7 +1,8 @@
 import Lake
 open Lake DSL
 
-package udl
+package udl where
+  license := "Apache-2.0"
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"

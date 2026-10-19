@@ -70,3 +70,8 @@ proved bounds, and remaining work.
 The book and its [companion materials](https://github.com/udlbook/udlbook) are
 the main learning resources. Book material is available under its
 [CC BY-NC-ND license](https://github.com/udlbook/udlbook/blob/main/LICENSE).
+
+## License
+
+Original code in this repository is licensed under [Apache 2.0](LICENSE).
+Referenced books and third-party materials retain their own licenses.
