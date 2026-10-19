@@ -9,6 +9,12 @@ try it on data, inspect the results, and use Lean to prove properties of the
 same models and algorithms. The emphasis is on learning through implementation
 and experiment.
 
+## Acknowledgements
+Thank you to **Sabatino Costanzo** and **Loren Trigo**, instructors of
+[APS1053H: Case Studies in AI in Finance](https://gradstudies.engineering.utoronto.ca/master-of-engineering-meng/elite-emphasis/elite-finance-management-courses/)
+at the University of Toronto, for their teaching and emphasis on learning
+through practical case studies.
+
 ## What is here
 
 The current work covers supervised learning, shallow and deep networks,
@@ -60,10 +66,3 @@ proved bounds, and remaining work.
 The book and its [companion materials](https://github.com/udlbook/udlbook) are
 the main learning resources. Book material is available under its
 [CC BY-NC-ND license](https://github.com/udlbook/udlbook/blob/main/LICENSE).
-
-## Acknowledgements
-
-Thank you to **Sabatino Costanzo** and **Loren Trigo**, instructors of
-[APS1053H: Case Studies in AI in Finance](https://gradstudies.engineering.utoronto.ca/master-of-engineering-meng/elite-emphasis/elite-finance-management-courses/)
-at the University of Toronto, for their teaching and emphasis on learning
-through practical case studies.
