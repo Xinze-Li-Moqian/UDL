@@ -510,5 +510,8 @@ with a proof that most probable labels are exactly labels with maximal scores.
 Equation (5.24) adds the reusable single-example multiclass cross-entropy
 and proves both the softmax-probability and log-sum-exp forms of the empirical
 loss, together with its maximum-likelihood equivalence.
+Section 5.6 constructs finite product prediction families and certified densities,
+proves the joint-density formula (5.25) and loss decomposition (5.26), and
+recovers existing single-output models as one-coordinate special cases.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.

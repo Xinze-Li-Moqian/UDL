@@ -16,6 +16,7 @@ Each concept has its own file in `ProbabilityModels/`:
 | `Gaussian.lean` | Gaussian families, a positive-variance density adapter, its maximum at the mean, and standard deviation |
 | `Bernoulli.lean` | Bernoulli families on binary labels, certified masses, and the negative log-mass expansion |
 | `Categorical.lean` | Finite categorical families, probability-vector constraints, and certified masses |
+| `Product.lean` | Finite product families and densities, coordinate marginals, independence, and single-factor recovery |
 | `ConditionalProbability.lean` | Event conditioning, normalization, ratio and Bayes rules |
 | `ConditionalDistribution.lean` | Predictive kernels and the links between conditional laws and expectations |
 | `ConditionalExpectation.lean` | Defining integral identity, measurability, averaging, and the tower property |
@@ -47,6 +48,14 @@ both labels require an interior parameter.
 sum one. `CategoricalParameters.ofProbabilities` accepts a vector and proofs
 of these constraints. The construction uses Mathlib's `PMF`, and the mass
 adapter proves that each specified weight is the corresponding event probability.
+
+`Product.lean` combines finite collections of these families, allowing different
+parameter and output types at different coordinates. `Family.pi` constructs the
+joint probability law, and its coordinate laws and mutual independence are
+proved. `Family.Density.pi` certifies the product of component densities with
+respect to the product reference measure, assuming sigma-finite component
+reference measures. The single-coordinate theorems recover any original family
+and chosen density.
 
 Expectation and variance retain Mathlib's integrability assumptions and
 totalization conventions. In particular, use `MemLp X 2 μ` for a finite second

@@ -7,6 +7,7 @@ public import ProbabilityModels.StandardDeviation
 public import ProbabilityModels.Gaussian
 public import ProbabilityModels.Bernoulli
 public import ProbabilityModels.Categorical
+public import ProbabilityModels.Product
 public import ProbabilityModels.ConditionalProbability
 public import ProbabilityModels.ConditionalDistribution
 public import ProbabilityModels.ConditionalExpectation

@@ -219,6 +219,18 @@ between probability modes and maximal raw scores.
 single-example loss using `empiricalLoss`, proves both lines of equation
 (5.24), and reuses maximum-likelihood equivalence for the resulting objective.
 
+Section 5.6 is implemented in
+[`MultipleOutputs/`](LossFunctions/MultipleOutputs/README.md), imported through
+`LossFunctions.MultipleOutputs`. It combines per-target parameter predictors
+with the product probability families and certified densities from
+`ProbabilityModels.Product`. Output types and distribution families may vary
+by target. `predictiveDensity_eq` proves (5.25); `loss_eq_sum` proves the double
+sum in (5.26) under positive observed component densities.
+`loss_single` recovers an original single-output negative log-likelihood.
+[`Examples/MultipleOutputs.lean`](LossFunctions/Examples/MultipleOutputs.lean)
+checks this reduction against the existing Gaussian, binary, and multiclass
+loss definitions.
+
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed
 perturbations, for future training examples.
