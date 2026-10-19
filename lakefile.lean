@@ -6,6 +6,9 @@ package udl
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "v4.35.0"
 
+require floatlib from git
+  "https://github.com/lean-dojo/FloatLib.git" @ "1f5771b3e36a98f17fcac2c6d76aaa024b36aa37"
+
 lean_lib Optimization where
   srcDir := "optimization"
   roots := #[`Argmin, `Argmax, `GradientDescent]
@@ -24,6 +27,15 @@ lean_lib InformationTheoryModels where
 lean_lib LossFunctions where
   srcDir := "loss-functions"
   roots := #[`LossFunctions]
+
+@[default_target]
+lean_lib FittingModels where
+  srcDir := "fitting-models"
+  roots := #[`FittingModels, `FittingModels.Examples.Quadratic,
+    `FittingModels.Examples.LinearRegression,
+    `FittingModels.Examples.LinearRegressionVerification,
+    `FittingModels.Examples.FloatLinearRegression,
+    `FittingModels.Examples.FloatLinearRegressionVerification]
 
 @[default_target]
 lean_lib SupervisedLearning where

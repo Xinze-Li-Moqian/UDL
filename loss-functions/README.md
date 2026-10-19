@@ -19,6 +19,12 @@ This constructor sums the terms without dividing by the sample count.
 Its definition uses `∑ i : Fin I, ℓ (f (x i) φ) (y i)` directly. The scalar
 type has an `AddCommMonoid` structure, as both `ℝ` and `ℚ` do.
 
+For floating-point execution, the same file provides `orderedEmpiricalLoss`
+using a right-associated list sum in index order. It requires only `Zero` and
+`Add`, so no associativity is imposed on floating-point arithmetic. The theorem
+`orderedEmpiricalLoss_eq_empiricalLoss` proves that it agrees with the original
+sum whenever the scalar is an `AddCommMonoid`.
+
 Both existing losses now use this construction. Chapter 2 supplies squared
 error for `ℓ`; negative log-likelihood supplies `ℓ(θ, y) = -log p(y | θ)`.
 `negativeLogLikelihood_eq_neg_logLikelihood` verifies that this sum equals

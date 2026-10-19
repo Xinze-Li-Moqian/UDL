@@ -14,7 +14,9 @@ restriction; properties such as decreasing loss require assumptions and proofs.
 
 namespace Optimization
 
-variable {Scalar Parameters : Type}
+universe u v
+
+variable {Scalar : Type u} {Parameters : Type v}
 variable [Sub Parameters] [SMul Scalar Parameters]
 
 /-- One update: `φ_next = φ - stepSize • gradient φ`. -/

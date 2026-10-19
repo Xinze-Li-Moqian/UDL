@@ -57,4 +57,20 @@ def empiricalLoss [AddCommMonoid Scalar] (ℓ : Prediction → Y → Scalar)
     LossFunction Scalar Parameters :=
   fun φ => ∑ i : Fin I, ℓ (f (x i) φ) (y i)
 
+/-- Evaluate losses in index order with right-associated addition.
+This also supports floating-point arithmetic, whose addition is not associative.
+The order is `ℓ₀ + (ℓ₁ + … + (ℓ_last + 0))`. -/
+def orderedEmpiricalLoss [Zero Scalar] [Add Scalar] (ℓ : Prediction → Y → Scalar)
+    (f : X → Parameters → Prediction) (x : Fin I → X) (y : Fin I → Y) :
+    LossFunction Scalar Parameters :=
+  fun φ => (List.ofFn fun i : Fin I => ℓ (f (x i) φ) (y i)).sum
+
+/-- Under associative, commutative addition, ordered evaluation is the same sum. -/
+theorem orderedEmpiricalLoss_eq_empiricalLoss [AddCommMonoid Scalar]
+    (ℓ : Prediction → Y → Scalar) (f : X → Parameters → Prediction)
+    (x : Fin I → X) (y : Fin I → Y) :
+    orderedEmpiricalLoss ℓ f x y = empiricalLoss ℓ f x y := by
+  funext φ
+  simp only [orderedEmpiricalLoss, empiricalLoss, List.sum_ofFn]
+
 end LossFunctions
