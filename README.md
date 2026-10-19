@@ -19,6 +19,10 @@ Thank you to **Sabatino Costanzo** and **Loren Trigo**, instructors of
 at the University of Toronto, for their teaching and emphasis on learning
 through practical case studies.
 
+I also thank my supervisor, **Yevgeny Liokumovich**, for his teaching in
+[MAT1510: Mathematics for AI Safety](https://www.fields.utoronto.ca/activities/26-27/SGC-safety),
+covering deep learning theory and mathematical approaches to AI safety.
+
 ## What is here
 
 The current work covers supervised learning, shallow and deep networks,
