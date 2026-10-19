@@ -1,6 +1,8 @@
 module
 
 public import LossFunctions.EmpiricalLoss
+public import LossFunctions.CrossEntropy
+public import LossFunctions.Recipe
 public import LossFunctions.BinaryCrossEntropy
 public import LossFunctions.MulticlassCrossEntropy
 public import LossFunctions.PredictiveDistribution

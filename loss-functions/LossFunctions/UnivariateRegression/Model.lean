@@ -1,6 +1,6 @@
 module
 
-public import LossFunctions.NegativeLogLikelihood
+public import LossFunctions.Recipe
 
 /-!
 # Univariate regression interface
@@ -23,15 +23,7 @@ open MeasureTheory ProbabilityModels
 open scoped LossFunctions ProbabilityModels
 
 /-- A distribution model for a real-valued target; `Θ` need not be one-dimensional. -/
-structure Model (X Parameters Θ : Type*) where
-  /-- The chosen output distributions, indexed by `θ`. -/
-  family : Family Θ ℝ
-  /-- The measure relative to which the density is defined. -/
-  referenceMeasure : Measure ℝ
-  /-- The existing density interface certifies compatibility with `family`. -/
-  density : family.Density referenceMeasure
-  /-- Model parameters `φ` and input `x` determine the distribution parameters `θ`. -/
-  predictParameters : X → Parameters → Θ
+abbrev Model (X Parameters Θ : Type*) := Recipe X ℝ Parameters Θ
 
 variable {X Parameters Θ : Type*} {I : ℕ}
 
@@ -41,7 +33,7 @@ variable {X Parameters Θ : Type*} {I : ℕ}
 -/
 def Model.predictiveDistribution (model : Model X Parameters Θ)
     (φ : Parameters) (x : X) : ProbabilityMeasure ℝ :=
-  model.family.predictiveDistribution model.predictParameters x φ
+  Recipe.predictiveDistribution model φ x
 
 /-- Construct the training loss through the existing negative log-likelihood.
 
@@ -49,7 +41,7 @@ def Model.predictiveDistribution (model : Model X Parameters Θ)
 -/
 noncomputable def Model.loss (model : Model X Parameters Θ)
     (x : Fin I → X) (y : Fin I → ℝ) : LossFunction ℝ Parameters :=
-  negativeLogLikelihood model.density model.predictParameters x y
+  Recipe.loss model x y
 
 /-- The shared loss formula, for any choice of distribution family. -/
 theorem Model.loss_apply (model : Model X Parameters Θ)

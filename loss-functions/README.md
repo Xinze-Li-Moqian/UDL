@@ -149,6 +149,51 @@ Section 5.2 assembles these existing definitions into the book's recipe:
 4. For a new input, return the predictive distribution or an output satisfying
    `IsModePrediction`.
 
+[`Recipe.lean`](LossFunctions/Recipe.lean) makes these four steps explicit.
+`Recipe X Y Parameters Θ` is a form with fields `family`, `referenceMeasure`,
+`density`, and `predictParameters`. A completed form supplies:
+
+```lean
+let L := recipe.loss x y
+-- Evaluate the generated objective:
+L[φ]
+-- Specify fitted parameters:
+recipe.IsFit x y «φ̂»
+-- Return the full distribution at a new input:
+recipe.predictiveDistribution «φ̂» newInput
+-- Specify a mode as a point prediction:
+recipe.IsPointPrediction newInput «φ̂» ŷ
+```
+
+The existing models now fill this same form:
+
+| Model constructor | Output type | Distribution parameters | Parameter predictor |
+| --- | --- | --- | --- |
+| `UnivariateRegression.gaussianModel` | `ℝ` | Mean and positive variance | Predicted mean, fixed variance |
+| `UnivariateRegression.Heteroscedastic.gaussianModel` | `ℝ` | Mean and positive variance | Two input-dependent predictors |
+| `Examples.BinaryClassification.recipe` | `Fin 2` | Probability of label 1 | Sigmoid of a score |
+| `Examples.MulticlassClassification.recipe` | `Fin K` | Probability vector | Softmax of K scores |
+| `MultipleOutputs.recipe` | Coordinate-dependent output tuple | Tuple of component parameters | Per-coordinate predictors |
+
+For example, binary classification fills the form as follows:
+
+```lean
+noncomputable def recipe (f : X → Parameters → ℝ) :
+    Recipe X (Fin 2) Parameters unitInterval where
+  family := bernoulliFamily
+  referenceMeasure := Measure.count
+  density := bernoulliMass
+  predictParameters := predictedProbability f
+```
+
+`UnivariateRegression.Model` is an alias of `Recipe` with `Y = ℝ`, preserving
+the regression API. Classification and product losses delegate to `Recipe.loss`;
+their previous formula and compatibility theorems still apply.
+`Recipe.isFit_iff_minimizes_crossEntropy` connects fitting to empirical
+conditional cross-entropy for a nonempty sample. Positive observed densities
+are required for the usual finite interpretation of log loss; the underlying
+real-log totalization is unchanged.
+
 Step 3 specifies the training objective; an algorithm for fitting general
 deep networks is still to be added.
 
@@ -230,6 +275,34 @@ sum in (5.26) under positive observed component densities.
 [`Examples/MultipleOutputs.lean`](LossFunctions/Examples/MultipleOutputs.lean)
 checks this reduction against the existing Gaussian, binary, and multiclass
 loss definitions.
+
+Section 5.7 begins in [`CrossEntropy.lean`](LossFunctions/CrossEntropy.lean).
+`crossEntropy q p θ` is the expectation of the negative log of the certified
+model density `p θ` under the data distribution `q`:
+
+```text
+H(q, pθ) = 𝔼[y ∼ q, −log p(y | θ)].
+```
+
+`conditionalCrossEntropy q p f` instead averages over input/output pairs,
+using the model parameters `f(x, φ)` at each input. For the empirical
+distribution of training pairs, the main identity is
+
+```text
+L[φ] = negativeLogLikelihood p f x y φ / I,    I > 0.
+```
+
+`mem_argmin_conditionalCrossEntropy_iff` proves that dropping `1 / I` preserves
+the entire set of minimizers. Two further theorems recover the existing binary
+and multiclass single-example losses by concentrating the data distribution
+at the observed label. These results reuse the expectation and empirical
+distribution interfaces in `ProbabilityModels`.
+
+As with the existing NLL, positive observed densities are needed for the usual
+finite log-loss interpretation. No claim of finite KL divergence from an atomic
+empirical measure to a continuous model is made: those measures fail the
+required absolute-continuity condition. The KL/entropy decomposition in (5.27)
+and (5.29) remains a separate step under appropriate hypotheses.
 
 [`Examples/Data/ToyRegression.lean`](LossFunctions/Examples/Data/ToyRegression.lean)
 stores ten synthetic `(x, y)` pairs near `y = 1 + 2x`, with small fixed

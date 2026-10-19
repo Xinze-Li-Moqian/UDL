@@ -4,6 +4,7 @@ public import ProbabilityModels.Bernoulli
 public import LossFunctions.BinaryCrossEntropy
 public import LossFunctions.NegativeLogLikelihood
 public import LossFunctions.Inference
+public import LossFunctions.Recipe
 public import ActivationFunction.Sigmoid
 
 /-!
@@ -45,13 +46,21 @@ noncomputable def predictedProbability (f : X → Parameters → ℝ)
     (x : X) (φ : Parameters) :
     (predictedProbability f x φ : ℝ) = NeuralNetworks.sigmoid (f x φ) := rfl
 
+/-- Fill the common recipe with Bernoulli masses and a sigmoid parameter predictor. -/
+noncomputable def recipe (f : X → Parameters → ℝ) :
+    Recipe X (Fin 2) Parameters unitInterval where
+  family := bernoulliFamily
+  referenceMeasure := Measure.count
+  density := bernoulliMass
+  predictParameters := predictedProbability f
+
 /-- Return the full distribution over the two labels.
 
     Pr[· | x; predictiveDistribution f, φ] = Bernoulli(λ(x, φ)).
 -/
 noncomputable def predictiveDistribution (f : X → Parameters → ℝ)
     (φ : Parameters) (x : X) : ProbabilityMeasure (Fin 2) :=
-  bernoulliFamily.predictiveDistribution (predictedProbability f) x φ
+  (recipe f).predictiveDistribution φ x
 
 /-- Equation (5.19): substitute the predicted probability into the Bernoulli mass.
 
@@ -77,7 +86,7 @@ theorem predictiveMass_pos (f : X → Parameters → ℝ)
 -/
 noncomputable def crossEntropyLoss (f : X → Parameters → ℝ)
     (x : Fin I → X) (y : Fin I → Fin 2) : LossFunction ℝ Parameters :=
-  empiricalLoss binaryCrossEntropy (predictedProbability f) x y
+  (recipe f).loss x y
 
 /-- The empirical binary cross-entropy is the existing Bernoulli negative log-likelihood. -/
 theorem crossEntropyLoss_eq_negativeLogLikelihood (f : X → Parameters → ℝ)

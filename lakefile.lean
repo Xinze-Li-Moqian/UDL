@@ -16,6 +16,11 @@ lean_lib ProbabilityModels where
   roots := #[`ProbabilityModels]
 
 @[default_target]
+lean_lib InformationTheoryModels where
+  srcDir := "information-theory"
+  roots := #[`InformationTheoryModels]
+
+@[default_target]
 lean_lib LossFunctions where
   srcDir := "loss-functions"
   roots := #[`LossFunctions]

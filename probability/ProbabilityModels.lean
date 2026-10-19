@@ -2,6 +2,8 @@ module
 
 public import ProbabilityModels.Family
 public import ProbabilityModels.Expectation
+public import ProbabilityModels.Dirac
+public import ProbabilityModels.EmpiricalDistribution
 public import ProbabilityModels.Variance
 public import ProbabilityModels.StandardDeviation
 public import ProbabilityModels.Gaussian

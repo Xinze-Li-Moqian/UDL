@@ -2,6 +2,7 @@ module
 
 public import ProbabilityModels.Product
 public import LossFunctions.NegativeLogLikelihood
+public import LossFunctions.Recipe
 
 /-!
 # Independent multiple-output predictions
@@ -53,11 +54,25 @@ theorem predictiveDensity_eq (p : ∀ d, (families d).Density (ν d))
     Pr[y | (fun d => f d x φ); Family.Density.pi p] =
       ∏ d, Pr[y d | f d x φ; p d] := rfl
 
+/-- Fill the common recipe with a certified product density and coordinate predictors. -/
+noncomputable def recipe (p : ∀ d, (families d).Density (ν d))
+    (f : ∀ d, X → Parameters → Θ d) :
+    Recipe X (∀ d, Y d) Parameters (∀ d, Θ d) where
+  family := Family.pi families
+  referenceMeasure := Measure.pi ν
+  density := Family.Density.pi p
+  predictParameters x φ d := f d x φ
+
+/-- The recipe's prediction agrees with the existing joint prediction. -/
+theorem recipe_predictiveDistribution (p : ∀ d, (families d).Density (ν d))
+    (f : ∀ d, X → Parameters → Θ d) (φ : Parameters) (x : X) :
+    (recipe p f).predictiveDistribution φ x = predictiveDistribution families f φ x := rfl
+
 /-- The existing negative log-likelihood applied to the joint family. -/
 noncomputable def loss {I : ℕ} (p : ∀ d, (families d).Density (ν d))
     (f : ∀ d, X → Parameters → Θ d) (x : Fin I → X) (y : Fin I → ∀ d, Y d) :
     LossFunction ℝ Parameters :=
-  negativeLogLikelihood (Family.Density.pi p) (fun x φ d => f d x φ) x y
+  (recipe p f).loss x y
 
 /-- Equation (5.26): positive observed densities turn output products into loss sums.
 

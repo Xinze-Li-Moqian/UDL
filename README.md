@@ -435,6 +435,11 @@ that the width-three network expands to the single expression of equation (4.10)
 
 ## Chapter 5: Loss Functions
 
+`information-theory/` is a separate foundation alongside `probability/`.
+Its `InformationTheoryModels` entry point currently exposes KL divergence for
+probability measures by reusing Mathlib's definition and core properties.
+See [information-theory/README.md](information-theory/README.md).
+
 `probability/` holds reusable probability interfaces built on Mathlib, separately
 from network architectures and training objectives. Its library entry point is
 `ProbabilityModels`. Section 5.1.1 starts with `ProbabilityModels.Family Θ Y`, a
@@ -513,5 +518,13 @@ loss, together with its maximum-likelihood equivalence.
 Section 5.6 constructs finite product prediction families and certified densities,
 proves the joint-density formula (5.25) and loss decomposition (5.26), and
 recovers existing single-output models as one-coordinate special cases.
+Section 5.7 adds empirical probability distributions and cross-entropy as
+expected negative log density. It proves that empirical supervised cross-entropy
+is the average NLL, with exactly the same minimizers, and recovers the binary
+and multiclass losses for a single observed label.
+`LossFunctions.Recipe` packages the distribution family, certified density,
+and parameter predictor into a common interface for prediction and training
+objectives. Gaussian, binary, categorical, and independent multiple-output
+models instantiate this interface.
 See [loss-functions/README.md](loss-functions/README.md) for these definitions.
 See [probability/README.md](probability/README.md) for the file map and current scope.

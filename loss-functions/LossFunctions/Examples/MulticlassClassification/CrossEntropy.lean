@@ -29,7 +29,7 @@ variable {X Parameters : Type*} {K I : ℕ} [NeZero K]
 /-- Sum multiclass cross-entropy over the training pairs using softmax predictions. -/
 noncomputable def crossEntropyLoss (f : X → Parameters → Fin K → ℝ)
     (x : Fin I → X) (y : Fin I → Fin K) : LossFunction ℝ Parameters :=
-  empiricalLoss multiclassCrossEntropy (predictedParameters f) x y
+  (recipe f).loss x y
 
 /-- The empirical multiclass loss is the existing categorical negative log-likelihood. -/
 theorem crossEntropyLoss_eq_negativeLogLikelihood (f : X → Parameters → Fin K → ℝ)

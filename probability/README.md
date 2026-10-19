@@ -11,6 +11,8 @@ Each concept has its own file in `ProbabilityModels/`:
 | --- | --- |
 | `Family.lean` | Parameterized probability measures and predictive distributions |
 | `Expectation.lean` | Expectation notation, linearity, affine transformations, and order properties |
+| `Dirac.lean` | Probability concentrated at one point and integration by evaluation |
+| `EmpiricalDistribution.lean` | Equal-weight sample probability measures and the expectation-as-sample-average identity |
 | `Variance.lean` | Centered and second-moment formulas, affine transformations, and zero variance |
 | `StandardDeviation.lean` | Square-root definition, affine transformations, and zero standard deviation |
 | `Gaussian.lean` | Gaussian families, a positive-variance density adapter, its maximum at the mean, and standard deviation |
@@ -28,6 +30,13 @@ Each concept has its own file in `ProbabilityModels/`:
 | `Examples/Density.lean` | A normalized Gaussian predictive density, consistent with that kernel |
 | `Examples/Moments.lean` | Two-outcome variance and affine Gaussian variance and standard deviation |
 | `Examples/Independence.lean` | Variance of a sample mean under pairwise independence |
+
+`EmpiricalDistribution.lean` defines `empiricalDistribution z` for a nonempty
+sample `z : Fin I → Z`. It assigns mass `1 / I` to each occurrence, so repeated
+values are counted repeatedly. `expectation_empiricalDistribution` proves that
+integrating a real function gives its sample average. This construction also
+works for continuous observation spaces without treating Dirac measures as
+densities relative to volume.
 
 The files reuse Mathlib's probability theory and add interfaces for models.
 `StandardDeviation.lean` adds `ProbabilityModels.standardDeviation`, and

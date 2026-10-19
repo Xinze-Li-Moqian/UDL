@@ -2,6 +2,7 @@ module
 
 public import LossFunctions.Examples.MulticlassClassification.Categorical
 public import LossFunctions.Inference
+public import LossFunctions.Recipe
 public import ActivationFunction.Softmax
 
 /-!
@@ -34,13 +35,21 @@ noncomputable def predictedParameters (f : X → Parameters → Fin K → ℝ)
   CategoricalParameters.ofProbabilities (NeuralNetworks.softmax (f x φ))
     (fun k => (NeuralNetworks.softmax_pos _ k).le) (NeuralNetworks.sum_softmax _)
 
+/-- Fill the common recipe with categorical masses and a softmax parameter predictor. -/
+noncomputable def recipe (f : X → Parameters → Fin K → ℝ) :
+    Recipe X (Fin K) Parameters (CategoricalParameters K) where
+  family := categoricalFamily
+  referenceMeasure := Measure.count
+  density := categoricalMass
+  predictParameters := predictedParameters f
+
 /-- Return the categorical distribution selected by the predicted probabilities.
 
     Pr[· | x; predictiveDistribution f, φ] = Categorical(softmax(f(x, φ))).
 -/
 noncomputable def predictiveDistribution (f : X → Parameters → Fin K → ℝ)
     (φ : Parameters) (x : X) : ProbabilityMeasure (Fin K) :=
-  categoricalFamily.predictiveDistribution (predictedParameters f) x φ
+  (recipe f).predictiveDistribution φ x
 
 /-- Equation (5.23): a label's predicted probability is its softmax component. -/
 @[simp] theorem predictiveMass_eq (f : X → Parameters → Fin K → ℝ)
