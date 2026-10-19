@@ -36,12 +36,14 @@ lean_lib FittingModels where
     `FittingModels.Examples.LinearRegression,
     `FittingModels.Examples.LinearRegressionVerification,
     `FittingModels.Examples.FloatLinearRegression,
-    `FittingModels.Examples.FloatLinearRegressionVerification]
+    `FittingModels.Examples.FloatLinearRegressionVerification,
+    `FittingModels.Examples.Gabor, `FittingModels.Examples.GaborNonconvex]
 
 @[default_target]
 lean_lib SupervisedLearning where
   srcDir := "supervised-learning"
   roots := #[`SupervisedLearning, `Discriminative.Model,
+    `Discriminative.Gabor,
     `Discriminative.LinearRegression, `Discriminative.LinearRegressionTraining,
     `Generative.Model, `Generative.LinearRegression, `Generative.LinearRegressionTraining,
     `Examples, `Verification]
