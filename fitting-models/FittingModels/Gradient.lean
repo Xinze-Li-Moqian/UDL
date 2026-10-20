@@ -5,6 +5,7 @@ public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.Calculus.FDeriv.Add
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
@@ -34,6 +35,14 @@ open scoped Gradient
 variable {Parameters : Type*} [NormedAddCommGroup Parameters]
 variable [InnerProductSpace ℝ Parameters] [CompleteSpace Parameters]
 variable {L : LossFunction ℝ Parameters} {φ g : Parameters}
+
+/-- The gradient of a finite sum is the sum of verified sample gradients. -/
+lemma hasGradientAt_sum {ι : Type*} [Fintype ι]
+    (L : ι → LossFunction ℝ Parameters) (g : ι → Parameters)
+    (h : ∀ i, HasGradientAt (L i) (g i) φ) :
+    HasGradientAt (fun ψ => ∑ i, L i ψ) (∑ i, g i) φ := by
+  rw [hasGradientAt_iff_hasFDerivAt, map_sum]
+  exact HasFDerivAt.fun_sum (fun i _ => (h i).hasFDerivAt)
 
 /-- The loss derivative along a direction v is its inner product with the gradient.
 

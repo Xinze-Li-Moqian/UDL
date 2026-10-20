@@ -12,7 +12,7 @@ require floatlib from git
 
 lean_lib Optimization where
   srcDir := "optimization"
-  roots := #[`Argmin, `Argmax, `GradientDescent]
+  roots := #[`Argmin, `Argmax, `GradientDescent, `Momentum, `Adam]
 
 @[default_target]
 lean_lib ProbabilityModels where

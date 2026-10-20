@@ -45,8 +45,11 @@ noncomputable def empiricalDistribution (z : Fin I → Z) : ProbabilityMeasure Z
 
 variable [MeasurableSingletonClass Z]
 
-/-- Any real function is integrable under the finite empirical distribution. -/
-theorem integrable_empiricalDistribution (z : Fin I → Z) (g : Z → ℝ) :
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+
+omit [NormedSpace ℝ E] [CompleteSpace E] in
+/-- Any real or vector-valued function is integrable under the finite empirical distribution. -/
+theorem integrable_empiricalDistribution (z : Fin I → Z) (g : Z → E) :
     Integrable g (empiricalDistribution z : Measure Z) := by
   rw [coe_empiricalDistribution]
   apply Integrable.smul_measure
@@ -62,5 +65,13 @@ theorem expectation_empiricalDistribution (z : Fin I → Z) (g : Z → ℝ) :
   rw [coe_empiricalDistribution, integral_smul_measure,
     integral_finsetSum_measure (fun i _ => integrable_dirac (by simp))]
   simp [div_eq_mul_inv, mul_comm]
+
+/-- Vector-valued expectation under an empirical distribution is a sample average.
+This includes vectors of model gradients. -/
+theorem expectation_empiricalDistribution_smul (z : Fin I → Z) (g : Z → E) :
+    𝔼[g; (empiricalDistribution z : Measure Z)] = (I : ℝ)⁻¹ • ∑ i, g (z i) := by
+  rw [coe_empiricalDistribution, integral_smul_measure,
+    integral_finsetSum_measure (fun i _ => integrable_dirac (by simp))]
+  simp
 
 end ProbabilityModels
