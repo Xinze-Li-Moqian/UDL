@@ -5,3 +5,5 @@ public import FittingModels.GradientDescent
 public import FittingModels.StochasticGradientDescent.Basic
 public import FittingModels.StochasticGradientDescent.UniformSampling
 public import FittingModels.Momentum.Basic
+public import FittingModels.Adam.SquareOfSum
+public import FittingModels.Adam.SumOfSquares
